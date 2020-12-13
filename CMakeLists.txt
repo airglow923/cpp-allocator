@@ -10,15 +10,14 @@ project(cpp-allocator
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# CLANG-TIDY
-# SET(CMAKE_CXX_CLANG_TIDY
-#     "CLANG-TIDY"
-#     "-HEADER-FILTER=."
-#     "-CHECKS=*,-GOOGLE-*, \
-#         -FUCHSIA-TRAILING-RETURN,-READABILITY-BRACES-AROUND-STATEMENTS, \
-#         -HICPP-BRACES-AROUND-STATEMENTS, \
-#         -LLVMLIBC-RESTRICT-SYSTEM-LIBC-HEADERS,"
-#     "-WARNINGS-AS-ERRORS=*")
+# clang-tidy
+set(CMAKE_CXX_CLANG_TIDY
+    "clang-tidy"
+    "-header-filter=*"
+    "-checks= \
+        readability-*,-readability-braces-around-statements, \
+        modernize-*"
+    "-warnings-as-errors=*")
 
 include(GNUInstallDirs)
 
@@ -36,7 +35,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     PRIVATE src)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-  VERSION ${PROJECT_VERSION}
+    VERSION ${PROJECT_VERSION}
     SOVERSION 1
     PUBLIC_HEADER ${INCLUDE_FILES})
 
