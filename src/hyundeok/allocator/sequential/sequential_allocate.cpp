@@ -26,7 +26,7 @@ auto allocate_size(size_t size) -> size_t {
 }
 
 auto request_heap(size_t size) -> HeapHeader* {
-  auto heap = static_cast<HeapHeader*>(sbrk(0));
+  auto* heap = static_cast<HeapHeader*>(sbrk(0));
 
   if (sbrk(allocate_size(size)) == reinterpret_cast<void*>(-1))
     heap = nullptr;
