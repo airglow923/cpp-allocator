@@ -1,12 +1,9 @@
-#pragma once
-
-#ifndef __HYUNDEOK_MEMORY_ALLOCATOR_MEMORY_TYPES_HPP__
-#define __HYUNDEOK_MEMORY_ALLOCATOR_MEMORY_TYPES_HPP__
+#ifndef HYUNDEOK_ALLOCATOR_ALLOCATOR_TYPES_HPP_
+#define HYUNDEOK_ALLOCATOR_ALLOCATOR_TYPES_HPP_
 
 #include <cstdint>
 
 namespace hyundeok {
-namespace memory {
 namespace allocator {
 
 using word_t = std::intptr_t;
@@ -24,7 +21,6 @@ struct HeapHeader {
 };
 
 } // namespace allocator
-} // namespace memory
 } // namespace hyundeok
 
 #endif

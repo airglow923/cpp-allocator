@@ -1,16 +1,14 @@
-#include "sequential_allocate.hpp"
+#include "hyundeok/allocator/sequential/sequential_allocate.hpp"
 
 #include <unistd.h>
 
 #include <utility>
 
-namespace hyundeok {
-namespace memory {
-namespace allocator {
+namespace hyundeok::allocator::sequential {
 
 namespace {
 
-HeapHeader* heap_start = nullptr;
+const HeapHeader* heap_start = nullptr;
 HeapHeader* top = nullptr;
 
 auto align_heap(size_t n) -> word_t {
@@ -30,14 +28,14 @@ auto allocate_size(size_t size) -> size_t {
 auto request_heap(size_t size) -> HeapHeader* {
   auto heap = static_cast<HeapHeader*>(sbrk(0));
 
-  if (sbrk(allocate_size(size)) == (void*)-1)
+  if (sbrk(allocate_size(size)) == reinterpret_cast<void*>(-1))
     heap = nullptr;
 
   return heap;
 }
 
 auto get_heap_header(void* heap) -> HeapHeader* {
-  return (HeapHeader*)heap - sizeof(HeapHeader) +
+  return reinterpret_cast<HeapHeader*>(heap) - sizeof(HeapHeader) +
          sizeof(std::declval<HeapHeader>().data_);
 }
 
@@ -46,7 +44,7 @@ auto get_heap_header(void* heap) -> HeapHeader* {
 auto sequential_allocate(size_t size) -> void* {
   size = align_heap(size);
 
-  auto heap = request_heap(size);
+  auto* heap = request_heap(size);
   heap->size_ = size;
   heap->used_ = true;
 
@@ -61,11 +59,16 @@ auto sequential_allocate(size_t size) -> void* {
   return heap->data_;
 }
 
+/*
+ * The design of deallocation method used here is only for a demonstration
+ * purpose, not for production. Since sequential allocation mostly relies
+ * either on
+ */
 auto sequential_free(void* ptr) -> void {
-  auto heap_header = get_heap_header(ptr);
+  auto* heap_header = get_heap_header(ptr);
   heap_header->used_ = false;
+  // brk(heap_start);
+  top = nullptr;
 }
 
-} // namespace allocator
-} // namespace memory
-} // namespace hyundeok
+} // namespace hyundeok::allocator::sequential
