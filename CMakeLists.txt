@@ -13,7 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # clang-tidy
 set(CMAKE_CXX_CLANG_TIDY
     "clang-tidy"
-    "-header-filter=*"
+    "-header-filter=.*"
     "-checks= \
         readability-*,-readability-braces-around-statements, \
         modernize-*"
@@ -22,7 +22,7 @@ set(CMAKE_CXX_CLANG_TIDY
 include(GNUInstallDirs)
 
 set(INCLUDE_FILES
-    include/hyundeok/allocator/sequential/sequential_allocate.hpp)
+    include/hyundeok/allocator/sequential/sequential_allocate.h)
 
 set(SOURCE_FILES
     src/hyundeok/allocator/sequential/sequential_allocate.cpp)

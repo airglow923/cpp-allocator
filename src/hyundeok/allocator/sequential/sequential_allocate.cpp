@@ -1,4 +1,4 @@
-#include "hyundeok/allocator/sequential/sequential_allocate.hpp"
+#include "hyundeok/allocator/sequential/sequential_allocate.h"
 
 #include <unistd.h>
 
@@ -11,40 +11,40 @@ namespace {
 const HeapHeader* heap_start = nullptr;
 HeapHeader* top = nullptr;
 
-auto align_heap(size_t n) -> word_t {
-  return (n + sizeof(word_t) - 1) & ~(sizeof(word_t) - 1);
+auto AlignHeap(SizeT n) -> WordT {
+  return (n + sizeof(WordT) - 1) & ~(sizeof(WordT) - 1);
 }
 
 /*
- * Why not sizeof(word_t)?
+ * Why not sizeof(WordT)?
  *
  * Because the size of a variable is not guaranteed to be the same as the size
  * of an array with length 1.
  */
-auto allocate_size(size_t size) -> size_t {
+auto AllocateSize(SizeT size) -> SizeT {
   return size + sizeof(HeapHeader) - sizeof(std::declval<HeapHeader>().data_);
 }
 
-auto request_heap(size_t size) -> HeapHeader* {
+auto RequestHeap(SizeT size) -> HeapHeader* {
   auto* heap = static_cast<HeapHeader*>(sbrk(0));
 
-  if (sbrk(allocate_size(size)) == reinterpret_cast<void*>(-1))
+  if (sbrk(AllocateSize(size)) == reinterpret_cast<void*>(-1))
     heap = nullptr;
 
   return heap;
 }
 
-auto get_heap_header(void* heap) -> HeapHeader* {
+auto GetHeapHeader(void* heap) -> HeapHeader* {
   return reinterpret_cast<HeapHeader*>(heap) - sizeof(HeapHeader) +
          sizeof(std::declval<HeapHeader>().data_);
 }
 
 } // namespace
 
-auto sequential_allocate(size_t size) -> void* {
-  size = align_heap(size);
+auto SequentialAllocate(SizeT size) -> void* {
+  size = AlignHeap(size);
 
-  auto* heap = request_heap(size);
+  auto* heap = RequestHeap(size);
   heap->size_ = size;
   heap->used_ = true;
 
@@ -64,8 +64,8 @@ auto sequential_allocate(size_t size) -> void* {
  * purpose, not for production. Since sequential allocation mostly relies
  * either on
  */
-auto sequential_free(void* ptr) -> void {
-  auto* heap_header = get_heap_header(ptr);
+auto SequentialFree(void* ptr) -> void {
+  auto* heap_header = GetHeapHeader(ptr);
   heap_header->used_ = false;
   // brk(heap_start);
   top = nullptr;
