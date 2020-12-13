@@ -25,7 +25,7 @@ set(INCLUDE_FILES
     include/hyundeok/allocator/sequential/sequential_allocate.h)
 
 set(SOURCE_FILES
-    src/hyundeok/allocator/sequential/sequential_allocate.cpp)
+    src/hyundeok/allocator/sequential/sequential_allocate.cc)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
