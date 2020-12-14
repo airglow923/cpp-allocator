@@ -8,15 +8,15 @@ namespace hyundeok::allocator::sequential {
 
 namespace {
 
-const HeapHeader* heap_start = nullptr;
-HeapHeader* top = nullptr;
+const void* const heap_start{sbrk(0)};
+HeapHeader* top{nullptr};
 
 auto AlignHeap(SizeT n) -> WordT {
   return (n + sizeof(WordT) - 1) & ~(sizeof(WordT) - 1);
 }
 
 /*
- * Why not sizeof(WordT)?
+ * Why not sizeof(char)?
  *
  * Because the size of a variable is not guaranteed to be the same as the size
  * of an array with length 1.
@@ -34,41 +34,44 @@ auto RequestHeap(SizeT size) -> HeapHeader* {
   return heap;
 }
 
-auto GetHeapHeader(void* heap) -> HeapHeader* {
-  return reinterpret_cast<HeapHeader*>(heap) - sizeof(HeapHeader) +
-         sizeof(std::declval<HeapHeader>().data_);
-}
+auto ConvertPtrToVoidPtr(void* ptr) -> void* { return ptr; }
 
+auto GetHeapHeader(void* heap) -> HeapHeader* {
+  return static_cast<HeapHeader*>(ConvertPtrToVoidPtr(
+      static_cast<char*>(heap) - sizeof(HeapHeader) + sizeof(WordT)));
+}
+ 
 } // namespace
 
 auto SequentialAllocate(SizeT size) -> void* {
   size = AlignHeap(size);
 
   auto* heap = RequestHeap(size);
-  heap->size_ = size;
-  heap->used_ = true;
 
-  if (heap_start == nullptr)
-    heap_start = heap;
+  if (heap != nullptr) {
+    heap->size_ = size;
+    heap->used_ = true;
 
-  if (top != nullptr)
-    top->next_ = heap;
+    if (top != nullptr)
+      top->next_ = heap;
 
-  top = heap;
+    top = heap;
+  }
 
-  return heap->data_;
+  return heap != nullptr ? ConvertPtrToVoidPtr(heap->data_) : heap;
 }
 
 /*
- * The design of deallocation method used here is only for a demonstration
+ * The design of deallocation method used here is only for demonstration
  * purpose, not for production. Since sequential allocation mostly relies
- * either on
+ * either on garbage collection or pool allocation, dealocation is not covered
+ * here.
  */
 auto SequentialFree(void* ptr) -> void {
-  auto* heap_header = GetHeapHeader(ptr);
-  heap_header->used_ = false;
-  // brk(heap_start);
-  top = nullptr;
+  // auto* heap_header = GetHeapHeader(ptr);
+  // heap_header->used_ = false;
+  brk(const_cast<void*>(heap_start));
+  // top = GetHeapHeader(const_cast<void*>(heap_start));
 }
 
 } // namespace hyundeok::allocator::sequential

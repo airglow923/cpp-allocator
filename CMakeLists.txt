@@ -16,7 +16,7 @@ set(CMAKE_CXX_CLANG_TIDY
     "-header-filter=.*"
     "-checks= \
         readability-*,-readability-braces-around-statements, \
-        modernize-*"
+        modernize-*,-modernize-avoid-c-arrays"
     "-warnings-as-errors=*")
 
 include(GNUInstallDirs)

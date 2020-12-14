@@ -11,13 +11,13 @@ using SizeT = std::size_t;
 
 /*
  * next_ points to the first address of the next heap block.
- * data_ ponits to the first sizeof(intptr_t) bytes of the actual data.
+ * data_ ponits to the first byte of the actual data.
  */
 struct HeapHeader {
   SizeT size_;
   bool used_;
   HeapHeader* next_;
-  void* data_;
+  char data_[1];
 };
 
 } // namespace allocator
