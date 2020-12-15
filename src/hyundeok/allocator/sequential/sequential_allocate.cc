@@ -40,13 +40,14 @@ auto GetHeapHeader(void* heap) -> HeapHeader* {
   return static_cast<HeapHeader*>(ConvertPtrToVoidPtr(
       static_cast<char*>(heap) - sizeof(HeapHeader) + sizeof(WordT)));
 }
- 
+
 } // namespace
 
 auto SequentialAllocate(SizeT size) -> void* {
   size = AlignHeap(size);
 
   auto* heap = RequestHeap(size);
+  void* data = nullptr;
 
   if (heap != nullptr) {
     heap->size_ = size;
@@ -56,9 +57,10 @@ auto SequentialAllocate(SizeT size) -> void* {
       top->next_ = heap;
 
     top = heap;
+    data = heap->data_;
   }
 
-  return heap != nullptr ? ConvertPtrToVoidPtr(heap->data_) : heap;
+  return data;
 }
 
 /*
