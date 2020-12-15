@@ -19,6 +19,16 @@ set(CMAKE_CXX_CLANG_TIDY
         modernize-*,-modernize-avoid-c-arrays"
     "-warnings-as-errors=*")
 
+# vim YouCompleteMe
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+if( EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json" )
+  EXECUTE_PROCESS( COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json
+  )
+endif()
+
 include(GNUInstallDirs)
 
 set(INCLUDE_FILES
