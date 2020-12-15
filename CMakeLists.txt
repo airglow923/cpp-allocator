@@ -32,9 +32,11 @@ endif()
 include(GNUInstallDirs)
 
 set(INCLUDE_FILES
+    include/hyundeok/allocator/allocator_commons.h
     include/hyundeok/allocator/sequential/sequential_allocate.h)
 
 set(SOURCE_FILES
+    src/hyundeok/allocator/allocator_commons.cc
     src/hyundeok/allocator/sequential/sequential_allocate.cc)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
