@@ -6,6 +6,16 @@
 
 namespace hyundeok::allocator {
 
+auto GetHeapStart() -> void* {
+  static void* const heap_start{sbrk(0)};
+  return heap_start;
+}
+
+auto GetHeapTop() -> HeapHeader& {
+  static HeapHeader top{*GetHeapHeader(GetHeapStart())};
+  return top;
+}
+
 auto AlignHeap(SizeT n) -> WordT {
   return (n + sizeof(WordT) - 1) & ~(sizeof(WordT) - 1);
 }
