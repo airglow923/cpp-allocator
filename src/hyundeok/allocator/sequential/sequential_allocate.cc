@@ -7,27 +7,18 @@
 
 namespace hyundeok::allocator::sequential {
 
-namespace {
-
-const void* const heap_start{sbrk(0)};
-HeapHeader* top{nullptr};
-
-} // namespace
-
 auto SequentialAllocate(SizeT size) -> void* {
   size = AlignHeap(size);
 
   auto* heap = RequestHeap(size);
+  auto& top = GetHeapTop();
   void* data = nullptr;
 
   if (heap != nullptr) {
     heap->size_ = size;
     heap->used_ = true;
-
-    if (top != nullptr)
-      top->next_ = heap;
-
-    top = heap;
+    top.next_ = heap;
+    top = *heap;
     data = heap->data_;
   }
 
@@ -43,7 +34,7 @@ auto SequentialAllocate(SizeT size) -> void* {
 auto SequentialFree(void* ptr) -> void {
   // auto* heap_header = GetHeapHeader(ptr);
   // heap_header->used_ = false;
-  brk(const_cast<void*>(heap_start));
+  brk(const_cast<void*>(GetHeapStart()));
   // top = GetHeapHeader(const_cast<void*>(heap_start));
 }
 
