@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# vim YouCompleteMe
+.ycm_extra_conf.py
+.cache/
+
+# CMake build
+build/
+compile_commands.json
