@@ -38,3 +38,6 @@ if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json")
 endif()
 
 add_subdirectory(src)
+
+enable_testing()
+add_subdirectory(test)
