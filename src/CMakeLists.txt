@@ -13,7 +13,7 @@ set(SOURCE_FILES
 
 # file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 
-add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${INCLUDE_FILES})
+add_library(${PROJECT_NAME} SHARED "")
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
@@ -21,6 +21,10 @@ target_include_directories(${PROJECT_NAME}
         $<INSTALL_INTERFACE:${PROJECT_INCLUDE_DIR}>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_sources(${PROJECT_NAME}
+    PUBLIC ${INCLUDE_FILES}
+    PRIVATE ${SOURCE_FILES})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     VERSION ${PROJECT_VERSION}
