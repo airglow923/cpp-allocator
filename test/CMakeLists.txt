@@ -1,14 +1,25 @@
+# disable clang-tidy for building Googletest
+set(CMAKE_CXX_CLANG_TIDY "")
+
+################################################################################
+# Googletest                                                                   #
+################################################################################
+
 # Download and unpack googletest at configure time
 configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
+
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
   RESULT_VARIABLE result
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
+
 if(result)
   message(FATAL_ERROR "CMake step for googletest failed: ${result}")
 endif()
+
 execute_process(COMMAND ${CMAKE_COMMAND} --build .
   RESULT_VARIABLE result
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
+
 if(result)
   message(FATAL_ERROR "Build step for googletest failed: ${result}")
 endif()
@@ -29,6 +40,17 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
 if (CMAKE_VERSION VERSION_LESS 2.8.11)
   include_directories("${gtest_SOURCE_DIR}/include")
 endif()
+
+################################################################################
+
+# re-enable clang-tidy
+set(CMAKE_CXX_CLANG_TIDY
+    "clang-tidy"
+    "-header-filter=.*"
+    "-checks= \
+        readability-*,-readability-braces-around-statements, \
+        modernize-*,-modernize-avoid-c-arrays"
+    "-warnings-as-errors=*")
 
 add_executable(Test "")
 
