@@ -1,4 +1,4 @@
-# disable clang-tidy for building Googletest
+# disable clang-tidy for testing as it uses third-party framework
 set(CMAKE_CXX_CLANG_TIDY "")
 
 ################################################################################
@@ -43,21 +43,14 @@ endif()
 
 ################################################################################
 
-# re-enable clang-tidy
-set(CMAKE_CXX_CLANG_TIDY
-    "clang-tidy"
-    "-header-filter=.*"
-    "-checks= \
-        readability-*,-readability-braces-around-statements, \
-        modernize-*,-modernize-avoid-c-arrays"
-    "-warnings-as-errors=*")
-
 add_executable(Test "")
 
-target_sources(Test PRIVATE test.cc)
+target_sources(Test
+  PRIVATE
+      test_allocator_commons.cc)
 
 target_link_libraries(Test
-  PRIVATE gtest_main
-  PRIVATE ${PROJECT_NAME})
+  PRIVATE ${PROJECT_NAME}
+  PRIVATE gtest_main)
 
 add_test(NAME UnitTest COMMAND Test)
