@@ -7,10 +7,10 @@
 namespace hyundeok {
 namespace allocator {
 
-using WordT = std::intptr_t;
+using WordT = std::uintptr_t;
 using SizeT = std::size_t;
 
-static inline constexpr auto kMaxPtrAddress = std::numeric_limits<long>::max();
+inline constexpr auto kMaxPtrAddress = std::numeric_limits<long>::max();
 
 /*
  * next_ points to the first address of the next heap block.
