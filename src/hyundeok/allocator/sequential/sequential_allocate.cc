@@ -3,22 +3,20 @@
 
 #include <unistd.h>
 
-#include <utility>
-
 namespace hyundeok::allocator::sequential {
 
 auto SequentialAllocate(SizeT size) -> void* {
   size = AlignHeap(size);
 
   auto* heap = RequestHeap(size);
-  auto& top = GetHeapTop();
+  auto*& top = GetHeapTop();
   void* data = nullptr;
 
   if (heap != nullptr) {
     heap->size_ = size;
     heap->used_ = true;
-    top.next_ = heap;
-    top = *heap;
+    top->next_ = heap;
+    top = heap;
     data = heap->data_;
   }
 
