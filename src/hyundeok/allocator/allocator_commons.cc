@@ -11,8 +11,8 @@ auto GetHeapStart() -> void* {
   return heap_start;
 }
 
-auto GetHeapTop() -> HeapHeader& {
-  static HeapHeader top{*GetHeapHeader(GetHeapStart())};
+auto GetHeapTop() -> HeapHeader*& {
+  static auto* top = static_cast<HeapHeader*>(GetHeapStart());
   return top;
 }
 
