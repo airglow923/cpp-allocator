@@ -2,6 +2,7 @@
 
 #include <unistd.h>
 
+#include <cassert>
 #include <utility>
 
 namespace hyundeok::allocator {
@@ -31,6 +32,8 @@ auto AllocateSize(SizeT size) -> SizeT {
 }
 
 auto RequestHeap(SizeT size) -> HeapHeader* {
+  assert(size <= kMaxPtrAddress);
+
   auto* heap = static_cast<HeapHeader*>(sbrk(0));
 
   if (sbrk(AllocateSize(size)) == reinterpret_cast<void*>(-1))
