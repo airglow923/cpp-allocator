@@ -5,6 +5,8 @@
 
 #include <unistd.h>
 
+#include <limits>
+
 using hyundeok::allocator::AlignHeap;
 // using hyundeok::allocator::GetHeapHeader;
 using hyundeok::allocator::GetHeapStart;
@@ -53,9 +55,11 @@ TEST(TestGetHeapTop, InitialHeapTop) {
   ASSERT_EQ(GetHeapTop(), static_cast<HeapHeader*>(GetHeapStart()));
 }
 
-TEST(TestRequestHeap, NegativeSize) { ASSERT_DEATH(RequestHeap(-1), ""); }
+TEST(TestRequestHeap, NegativeSize) {
+  ASSERT_DEATH(RequestHeap(-1), "");
+}
 
-TEST(TestGetHeapTop, ExceedingMax) {
+TEST(TestRequestHeap, ExceedingMax) {
   ASSERT_DEATH(RequestHeap(SizeT(kMaxPtrAddress) + 1), "");
 }
 
