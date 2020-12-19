@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 using hyundeok::allocator::AlignHeap;
-using hyundeok::allocator::GetHeapHeader;
+// using hyundeok::allocator::GetHeapHeader;
 using hyundeok::allocator::GetHeapStart;
 using hyundeok::allocator::GetHeapTop;
 using hyundeok::allocator::HeapHeader;
