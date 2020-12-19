@@ -31,6 +31,17 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     SOVERSION ${CPP_ALLOCATOR_VERSION_MAJOR}
     PUBLIC_HEADER "${INCLUDE_FILES}")
 
+target_compile_options(${PROJECT_NAME}
+    PRIVATE
+        -Wall
+        -Wextra
+        -Werror
+        -Wcast-align
+        -Wcast-qual
+        -Wdiv-by-zero
+        -Wimplicit
+        -fexceptions)
+
 include(GNUInstallDirs)
 
 install(TARGETS ${PROJECT_NAME}
