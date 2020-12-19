@@ -47,7 +47,7 @@ add_executable(Test "")
 
 target_sources(Test
   PRIVATE
-      test_allocator_commons.cc)
+      test_allocator_utils.cc)
 
 target_link_libraries(Test
   PRIVATE ${PROJECT_NAME}
