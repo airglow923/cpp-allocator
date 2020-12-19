@@ -55,14 +55,12 @@ TEST(TestGetHeapTop, InitialHeapTop) {
   ASSERT_EQ(GetHeapTop(), static_cast<HeapHeader*>(GetHeapStart()));
 }
 
-TEST(TestRequestHeap, NegativeSize) {
-  if (std::numeric_limits<SizeT>::max() > std::numeric_limits<long>::max())
-    ASSERT_DEATH(RequestHeap(-1), "");
-}
+// TEST(TestRequestHeap, NegativeSize) {
+//   ASSERT_DEATH(RequestHeap(-1), "");
+// }
 
-TEST(TestRequestHeap, ExceedingMax) {
-  if (std::numeric_limits<SizeT>::max() > std::numeric_limits<long>::max())
-    ASSERT_DEATH(RequestHeap(SizeT(kMaxPtrAddress) + 1), "");
-}
+// TEST(TestRequestHeap, ExceedingMax) {
+//   ASSERT_DEATH(RequestHeap(SizeT(kMaxPtrAddress) + 1), "");
+// }
 
 } // namespace
