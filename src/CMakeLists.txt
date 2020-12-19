@@ -1,14 +1,14 @@
 set(PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 
 set(INCLUDE_FILES
-    ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/allocator_commons.h
+    ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/allocator_utils.h
     ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/allocator_types.h
     ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/sequential/sequential_allocate.h)
 
 # file(GLOB_RECURSE INCLUDE_FILES ${PROJECT_INCLUDE_DIR}/*.h)
 
 set(SOURCE_FILES
-    hyundeok/allocator/allocator_commons.cc
+    hyundeok/allocator/allocator_utils.cc
     hyundeok/allocator/sequential/sequential_allocate.cc)
 
 # file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
