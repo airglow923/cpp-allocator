@@ -8,7 +8,7 @@ namespace hyundeok {
 namespace allocator {
 namespace linked_list {
 
-HeapHeader* FirstFitSearch(SizeT size);
+auto FirstFitSearch(SizeT size) -> HeapHeader*;
 
 }
 }

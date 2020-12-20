@@ -2,7 +2,7 @@
 
 namespace hyundeok::allocator::linked_list {
 
-HeapHeader* FirstFitSearch(SizeT size) {
+auto FirstFitSearch(SizeT size) -> HeapHeader* {
   HeapHeader* fit = nullptr;
 
   for (auto* heap = static_cast<HeapHeader*>(GetHeapStart()); heap != nullptr;
