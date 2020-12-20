@@ -3,17 +3,7 @@
 namespace hyundeok::allocator::linked_list {
 
 auto FirstFitSearch(SizeT size) -> HeapHeader* {
-  HeapHeader* fit = nullptr;
-
-  for (auto* heap = static_cast<HeapHeader*>(GetHeapStart()); heap != nullptr;
-       heap = heap->next_) {
-    if (!heap->used_ && heap->size_ >= size) {
-      fit = heap;
-      break;
-    }
-  }
-
-  return fit;
+  return FitSearch(size, GetHeapStartHeader());
 }
 
 } // namespace hyundeok::allocator::linked_list
