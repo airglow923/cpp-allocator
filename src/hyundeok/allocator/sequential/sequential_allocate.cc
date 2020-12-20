@@ -32,7 +32,7 @@ auto SequentialAllocate(SizeT size) -> void* {
 auto SequentialFree(void* ptr) -> void {
   auto* heap_header = GetHeapHeader(ptr);
   heap_header->used_ = false;
-  brk(const_cast<void*>(GetHeapStart()));
+  brk(GetHeapStart());
   GetHeapTop() = GetHeapHeader(GetHeapStart());
 }
 
