@@ -33,7 +33,7 @@ auto SequentialFree(void* ptr) -> void {
   auto* heap_header = GetHeapHeader(ptr);
   heap_header->used_ = false;
   brk(GetHeapStart());
-  GetHeapTop() = GetHeapHeader(GetHeapStart());
+  GetHeapTop() = GetHeapStartHeader();
 }
 
 } // namespace hyundeok::allocator::sequential
