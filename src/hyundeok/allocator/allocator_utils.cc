@@ -8,12 +8,16 @@
 namespace hyundeok::allocator {
 
 auto GetHeapStart() -> void* {
-  static void* const heap_start{sbrk(0)};
+  static void* const heap_start = sbrk(0);
   return heap_start;
 }
 
+auto GetHeapStartHeader() -> HeapHeader* {
+  return static_cast<HeapHeader*>(GetHeapStart());
+}
+
 auto GetHeapTop() -> HeapHeader*& {
-  static auto* top = static_cast<HeapHeader*>(GetHeapStart());
+  static auto* top = GetHeapStartHeader();
   return top;
 }
 
