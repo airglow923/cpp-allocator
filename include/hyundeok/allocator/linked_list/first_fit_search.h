@@ -11,7 +11,7 @@ namespace linked_list {
 auto FirstFitSearch(SizeT size) -> HeapHeader*;
 
 }
-}
-}
+} // namespace allocator
+} // namespace hyundeok
 
 #endif
