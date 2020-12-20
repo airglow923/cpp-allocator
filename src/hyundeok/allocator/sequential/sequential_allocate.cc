@@ -30,10 +30,10 @@ auto SequentialAllocate(SizeT size) -> void* {
  * here.
  */
 auto SequentialFree(void* ptr) -> void {
-  // auto* heap_header = GetHeapHeader(ptr);
-  // heap_header->used_ = false;
+  auto* heap_header = GetHeapHeader(ptr);
+  heap_header->used_ = false;
   brk(const_cast<void*>(GetHeapStart()));
-  // top = GetHeapHeader(const_cast<void*>(heap_start));
+  GetHeapTop() = GetHeapHeader(GetHeapStart());
 }
 
 } // namespace hyundeok::allocator::sequential
