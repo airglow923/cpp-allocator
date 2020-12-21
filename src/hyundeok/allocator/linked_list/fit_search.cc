@@ -17,7 +17,7 @@ auto FitSearch(SizeT size, HeapHeader* begin) -> HeapHeader* {
 #if defined(__cpp_lib_concepts)
 template <std::invocable<HeapHeader*, SizeT> I>
 #else
-template<typename I
+template<typename I>
 #endif
 auto FitSearch(SizeT size, HeapHeader* begin, I op) -> HeapHeader* {
   HeapHeader* fit = nullptr;
