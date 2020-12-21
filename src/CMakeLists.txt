@@ -45,7 +45,6 @@ target_compile_options(${PROJECT_NAME}
         -Wcast-align
         -Wcast-qual
         -Wdiv-by-zero
-        -Wimplicit
         -fexceptions)
 
 include(GNUInstallDirs)
