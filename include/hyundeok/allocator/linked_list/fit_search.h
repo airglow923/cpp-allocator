@@ -4,7 +4,11 @@
 #include "hyundeok/allocator/allocator_types.h"
 #include "hyundeok/allocator/allocator_utils.h"
 
+#if defined(__cpp_concepts) && __cpp_concepts >= 201907L
 #include <concepts>
+#else
+#include <type_traits>
+#endif
 
 namespace hyundeok {
 namespace allocator {
@@ -12,7 +16,7 @@ namespace linked_list {
 
 auto FitSearch(SizeT size, HeapHeader* begin) -> HeapHeader*;
 
-#if defined(__cpp_lib_concepts)
+#if defined(__cpp_concepts) && __cpp_concepts >= 201907L
 template <std::invocable<HeapHeader*, SizeT> I>
 #else
 template <typename I>
