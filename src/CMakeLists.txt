@@ -6,7 +6,8 @@ set(INCLUDE_FILES
     ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/sequential/sequential_allocate.h
     ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/linked_list/fit_search.h
     ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/linked_list/first_fit_search.h
-    ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/linked_list/next_fit_search.h)
+    ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/linked_list/next_fit_search.h
+    ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/linked_list/best_fit_search.h)
 
 # file(GLOB_RECURSE INCLUDE_FILES ${PROJECT_INCLUDE_DIR}/*.h)
 
@@ -15,7 +16,8 @@ set(SOURCE_FILES
     hyundeok/allocator/sequential/sequential_allocate.cc
     hyundeok/allocator/linked_list/fit_search.cc
     hyundeok/allocator/linked_list/first_fit_search.cc
-    hyundeok/allocator/linked_list/next_fit_search.cc)
+    hyundeok/allocator/linked_list/next_fit_search.cc
+    hyundeok/allocator/linked_list/best_fit_search.cc)
 
 # file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 

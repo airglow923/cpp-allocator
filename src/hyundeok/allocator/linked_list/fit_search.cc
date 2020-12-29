@@ -1,5 +1,7 @@
 #include "hyundeok/allocator/linked_list/fit_search.h"
 
+#include "hyundeok/allocator/allocator_utils.h"
+
 namespace hyundeok::allocator::linked_list {
 
 namespace {

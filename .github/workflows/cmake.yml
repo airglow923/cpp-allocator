@@ -6,6 +6,11 @@ on:
       - '**'
       - '!.github/workflows/**'
       - '.github/workflows/cmake.yml'
+  pull_request:
+    paths:
+      - '**'
+      - '!.github/workflows/**'
+      - '.github/workflows/cmake.yml'
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)

@@ -1,5 +1,4 @@
-#ifndef HYUNDEOK_ALLOCATOR_LINKED_LIST_FIRST_FIT_SEARCH_H
-#define HYUNDEOK_ALLOCATOR_LINKED_LIST_FIRST_FIT_SEARCH_H
+#ifndef _HYUNDEOK_ALLOCATOR_LINKED_LIST_BEST_FIT_SEARCH_H_
 
 #include "hyundeok/allocator/allocator_types.h"
 
@@ -7,7 +6,7 @@ namespace hyundeok {
 namespace allocator {
 namespace linked_list {
 
-auto FirstFitSearch(SizeT size) -> HeapHeader*;
+auto BestFitSearch(SizeT size) -> HeapHeader*;
 
 }
 } // namespace allocator
