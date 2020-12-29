@@ -2,8 +2,6 @@
 #define HYUNDEOK_ALLOCATOR_LINKED_LIST_FIRST_FIT_SEARCH_H
 
 #include "hyundeok/allocator/allocator_types.h"
-#include "hyundeok/allocator/allocator_utils.h"
-#include "hyundeok/allocator/linked_list/fit_search.h"
 
 namespace hyundeok {
 namespace allocator {

@@ -2,7 +2,6 @@
 #define HYUNDEOK_ALLOCATOR_LINKED_LIST_FIT_SEARCH_H
 
 #include "hyundeok/allocator/allocator_types.h"
-#include "hyundeok/allocator/allocator_utils.h"
 
 #if defined(__cpp_concepts) && __cpp_concepts >= 201907L
 #include <concepts>
