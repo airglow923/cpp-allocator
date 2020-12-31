@@ -13,6 +13,9 @@ string(CONCAT PRJ_VER
 # find_program(CMAKE_CXX_COMPILER
 #     NAMES $ENV{CXX} clang++ PATHS ENV PATH NO_DEFAULT_PATH)
 
+find_program(CMAKE_CXX_COMPILER
+  NAMES $ENV{g++-10} g++-10 PATHS ENV PATH NO_DEFAULT_PATH)
+
 project(cpp-allocator
     VERSION ${PRJ_VER}
     DESCRIPTION "Different kinds of allocators implemented in C++") 
