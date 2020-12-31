@@ -29,11 +29,15 @@ auto SequentialAllocate(SizeT size) -> void* {
  * either on garbage collection or pool allocation, dealocation is not covered
  * here.
  */
-auto SequentialFree(void* ptr) -> void {
+auto SequentialFree(void* ptr) -> int {
   auto* heap_header = GetHeapHeader(ptr);
   heap_header->used_ = false;
-  brk(GetHeapStart());
-  GetHeapTop() = GetHeapStartHeader();
+  auto result = brk(GetHeapStart());
+
+  if (result != -1)
+    GetHeapTop() = GetHeapStartHeader();
+
+  return result;
 }
 
 } // namespace hyundeok::allocator::sequential
