@@ -4,14 +4,6 @@
 
 namespace hyundeok::allocator::linked_list {
 
-namespace {
-
-auto FindMatchHeap(HeapHeader* heap, SizeT size) -> bool {
-  return !heap->used_ && heap->size_ >= size;
-}
-
-} // namespace
-
 auto FitSearch(SizeT size, HeapHeader* begin) -> HeapHeader* {
   return FitSearch(size, begin, FindMatchHeap);
 }

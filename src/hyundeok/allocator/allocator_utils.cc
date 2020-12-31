@@ -61,6 +61,10 @@ auto InitializeHeapHeader(HeapHeader* heap, SizeT size) -> void {
   heap->next_ = nullptr;
 }
 
+auto FindMatchHeap(HeapHeader* heap, SizeT size) -> bool {
+  return !heap->used_ && heap->size_ >= size;
+}
+
 auto SplitHeap(HeapHeader* heap, SizeT size) -> HeapHeader* {
   heap->size_ -= AllocateSize(size);
   HeapHeader* new_heap = ConvertPtrToHeapHeader(heap->data_ + heap->size_);
