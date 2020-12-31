@@ -20,6 +20,11 @@ project(cpp-allocator
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 8.0)
+  set(CMAKE_CXX20_STANDARD_COMPILE_OPTION "-std=c++20")
+  set(CMAKE_CXX20_EXTENSION_COMPILE_OPTION "-std=gnu++20")
+endif()
+
 # clang-tidy
 set(CMAKE_CXX_CLANG_TIDY
     "clang-tidy"
