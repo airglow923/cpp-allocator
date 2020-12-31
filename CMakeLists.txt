@@ -9,8 +9,9 @@ string(CONCAT PRJ_VER
     ".${CPP_ALLOCATOR_VERSION_MINOR}"
     ".${CPP_ALLOCATOR_VERSION_PATCH}")
 
-find_program(CMAKE_CXX_COMPILER
-    NAMES $ENV{CXX} clang++ PATHS ENV PATH NO_DEFAULT_PATH)
+# Clang disabled due to insufficient support for C++20
+# find_program(CMAKE_CXX_COMPILER
+#     NAMES $ENV{CXX} clang++ PATHS ENV PATH NO_DEFAULT_PATH)
 
 project(cpp-allocator
     VERSION ${PRJ_VER}
