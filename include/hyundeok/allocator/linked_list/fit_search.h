@@ -12,9 +12,9 @@ namespace linked_list {
 template <typename T>
 concept HeapComparePolicy = std::is_invocable_r_v<bool, T, HeapHeader*, SizeT>;
 
-auto FitSearch(SizeT size, HeapHeader* begin) -> HeapHeader*;
+auto FitSearch(HeapHeader* begin, SizeT size) -> HeapHeader*;
 
-auto FitSearch(SizeT size, HeapHeader* begin, HeapComparePolicy auto op)
+auto FitSearch(HeapHeader* begin, SizeT size, HeapComparePolicy auto op)
     -> HeapHeader*;
 
 } // namespace linked_list

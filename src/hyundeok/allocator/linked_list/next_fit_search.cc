@@ -11,7 +11,7 @@ auto GetHeapFit() -> HeapHeader*& {
 }
 
 auto NextFitSearch(SizeT size) -> HeapHeader* {
-  auto* fit = FitSearch(size, GetHeapFit());
+  auto* fit = FitSearch(GetHeapFit(), size);
 
   if (fit != nullptr)
     GetHeapFit() = fit;
