@@ -9,18 +9,6 @@ string(CONCAT PRJ_VER
     ".${CPP_ALLOCATOR_VERSION_MINOR}"
     ".${CPP_ALLOCATOR_VERSION_PATCH}")
 
-find_program(CMAKE_CXX_COMPILER
-    NAMES $ENV{CXX} clang++ PATHS ENV PATH NO_DEFAULT_PATH)
-
-if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 10)
-  find_program(CMAKE_CXX_COMPILER
-      NAMES $ENV{CXX} g++ PATHS ENV PATH NO_DEFAULT_PATH)
-  if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 10.1)
-    find_program(CMAKE_CXX_COMPILER
-      NAMES $ENV{g++-10} g++-10 PATHS ENV PATH NO_DEFAULT_PATH REQUIRED)
-  endif()
-endif()
-
 project(cpp-allocator
     VERSION ${PRJ_VER}
     DESCRIPTION "Different kinds of allocators implemented in C++") 
@@ -29,8 +17,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # if compiler is Clang 10 and above and clang-tidy is found, run clang-tidy
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND
-    CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 10)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   find_program(CLANG_TIDY_FOUND NAMES clang-tidy)
   if (CLANG_TIDY_FOUND)
     set(CMAKE_CXX_CLANG_TIDY
