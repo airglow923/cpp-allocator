@@ -36,7 +36,7 @@ set(CMAKE_CXX_CLANG_TIDY
         readability-*,-readability-braces-around-statements, \
         modernize-*,-modernize-avoid-c-arrays"
     "-warnings-as-errors=*"
-    "-extra-arg=-std=c++20")
+    "-extra-arg=-std=c++2a")
 
 # vim YouCompleteMe
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
