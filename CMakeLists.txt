@@ -9,12 +9,17 @@ string(CONCAT PRJ_VER
     ".${CPP_ALLOCATOR_VERSION_MINOR}"
     ".${CPP_ALLOCATOR_VERSION_PATCH}")
 
-# Clang disabled due to insufficient support for C++20
-# find_program(CMAKE_CXX_COMPILER
-#     NAMES $ENV{CXX} clang++ PATHS ENV PATH NO_DEFAULT_PATH)
-
 find_program(CMAKE_CXX_COMPILER
-  NAMES $ENV{g++-10} g++-10 PATHS ENV PATH NO_DEFAULT_PATH)
+    NAMES $ENV{CXX} clang++ PATHS ENV PATH NO_DEFAULT_PATH)
+
+if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 10)
+  find_program(CMAKE_CXX_COMPILER
+      NAMES $ENV{CXX} g++ PATHS ENV PATH NO_DEFAULT_PATH)
+  if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 10.1)
+    find_program(CMAKE_CXX_COMPILER
+      NAMES $ENV{g++-10} g++-10 PATHS ENV PATH NO_DEFAULT_PATH REQUIRED)
+  endif()
+endif()
 
 project(cpp-allocator
     VERSION ${PRJ_VER}
@@ -23,20 +28,20 @@ project(cpp-allocator
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 8.0)
-  set(CMAKE_CXX20_STANDARD_COMPILE_OPTION "-std=c++2a")
-  set(CMAKE_CXX20_EXTENSION_COMPILE_OPTION "-std=gnu++2a")
+# if compiler is Clang 10 and above and clang-tidy is found, run clang-tidy
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND
+    CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 10)
+  find_program(CLANG_TIDY_FOUND NAMES clang-tidy)
+  if (CLANG_TIDY_FOUND)
+    set(CMAKE_CXX_CLANG_TIDY
+        "clang-tidy"
+        "-header-filter=.*"
+        "-checks= \
+            readability-*,-readability-braces-around-statements, \
+            modernize-*,-modernize-avoid-c-arrays"
+        "-warnings-as-errors=*")
+  endif()
 endif()
-
-# clang-tidy
-set(CMAKE_CXX_CLANG_TIDY
-    "clang-tidy"
-    "-header-filter=.*"
-    "-checks= \
-        readability-*,-readability-braces-around-statements, \
-        modernize-*,-modernize-avoid-c-arrays"
-    "-warnings-as-errors=*"
-    "-extra-arg=-std=c++2a")
 
 # vim YouCompleteMe
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
