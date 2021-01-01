@@ -9,9 +9,6 @@ string(CONCAT PRJ_VER
     ".${CPP_ALLOCATOR_VERSION_MINOR}"
     ".${CPP_ALLOCATOR_VERSION_PATCH}")
 
-find_program(CMAKE_CXX_COMPILER
-    NAMES $ENV{CXX} clang++ PATHS ENV PATH NO_DEFAULT_PATH)
-
 project(cpp-allocator
     VERSION ${PRJ_VER}
     DESCRIPTION "Different kinds of allocators implemented in C++") 
@@ -19,14 +16,19 @@ project(cpp-allocator
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# clang-tidy
-set(CMAKE_CXX_CLANG_TIDY
-    "clang-tidy"
-    "-header-filter=.*"
-    "-checks= \
-        readability-*,-readability-braces-around-statements, \
-        modernize-*,-modernize-avoid-c-arrays"
-    "-warnings-as-errors=*")
+# if compiler is Clang 10 and above and clang-tidy is found, run clang-tidy
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  find_program(CLANG_TIDY_FOUND NAMES clang-tidy)
+  if (CLANG_TIDY_FOUND)
+    set(CMAKE_CXX_CLANG_TIDY
+        "clang-tidy"
+        "-header-filter=.*"
+        "-checks= \
+            readability-*,-readability-braces-around-statements, \
+            modernize-*,-modernize-avoid-c-arrays"
+        "-warnings-as-errors=*")
+  endif()
+endif()
 
 # vim YouCompleteMe
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

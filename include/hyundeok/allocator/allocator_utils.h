@@ -12,8 +12,11 @@ auto GetHeapTop() -> HeapHeader*&;
 auto AlignHeap(SizeT n) -> WordT;
 auto AllocateSize(SizeT size) -> SizeT;
 auto RequestHeap(SizeT size) -> HeapHeader*;
-auto ConvertPtrToVoidPtr(void* ptr) -> void*;
+auto ConvertPtrToHeapHeader(void* ptr) -> HeapHeader*;
+auto InitializeHeapHeader(HeapHeader* heap, SizeT size) -> void;
+auto FindMatchHeap(HeapHeader* heap, SizeT size) -> bool;
 auto GetHeapHeader(void* heap) -> HeapHeader*;
+auto SplitHeap(HeapHeader* heap, SizeT size) -> HeapHeader*;
 
 } // namespace allocator
 } // namespace hyundeok

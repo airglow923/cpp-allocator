@@ -4,28 +4,12 @@
 
 namespace hyundeok::allocator::linked_list {
 
-namespace {
-
-auto FindMatchHeap(HeapHeader* heap, SizeT size) -> bool {
-  return !heap->used_ && heap->size_ >= size;
+auto FitSearch(HeapHeader* begin, SizeT size) -> HeapHeader* {
+  return FitSearch(begin, size, FindMatchHeap);
 }
 
-} // namespace
-
-auto FitSearch(SizeT size, HeapHeader* begin) -> HeapHeader* {
-  return FitSearch(size, begin, FindMatchHeap);
-}
-
-#if defined(__cpp_concepts) && __cpp_concepts >= 201907L
-template <std::invocable<HeapHeader*, SizeT> I>
-#else
-template <typename I>
-#endif
-auto FitSearch(SizeT size, HeapHeader* begin, I op) -> HeapHeader* {
-#if defined(__cpp_concepts) && __cpp_concepts >= 201907L
-  static_assert(std::is_invocable_v<I, HeapHeader*, SizeT>);
-#endif
-
+auto FitSearch(HeapHeader* begin, SizeT size, HeapComparePolicy auto op)
+    -> HeapHeader* {
   HeapHeader* fit = nullptr;
 
   for (; begin != nullptr; begin = begin->next_) {

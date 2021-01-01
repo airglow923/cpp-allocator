@@ -46,11 +46,30 @@ auto RequestHeap(SizeT size) -> HeapHeader* {
   return heap;
 }
 
-auto ConvertPtrToVoidPtr(void* ptr) -> void* { return ptr; }
+auto ConvertPtrToHeapHeader(void* ptr) -> HeapHeader* {
+  return static_cast<HeapHeader*>(ptr);
+}
 
 auto GetHeapHeader(void* heap) -> HeapHeader* {
-  return static_cast<HeapHeader*>(ConvertPtrToVoidPtr(
-      static_cast<char*>(heap) - sizeof(HeapHeader) + sizeof(WordT)));
+  return ConvertPtrToHeapHeader(static_cast<char*>(heap) - sizeof(HeapHeader) +
+                                sizeof(WordT));
+}
+
+auto InitializeHeapHeader(HeapHeader* heap, SizeT size) -> void {
+  heap->size_ = size;
+  heap->used_ = false;
+  heap->next_ = nullptr;
+}
+
+auto FindMatchHeap(HeapHeader* heap, SizeT size) -> bool {
+  return !heap->used_ && heap->size_ >= size;
+}
+
+auto SplitHeap(HeapHeader* heap, SizeT size) -> HeapHeader* {
+  heap->size_ -= AllocateSize(size);
+  HeapHeader* new_heap = ConvertPtrToHeapHeader(heap->data_ + heap->size_);
+  InitializeHeapHeader(heap, size);
+  return new_heap;
 }
 
 } // namespace hyundeok::allocator

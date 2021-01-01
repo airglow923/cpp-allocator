@@ -6,7 +6,7 @@
 namespace hyundeok::allocator::linked_list {
 
 auto FirstFitSearch(SizeT size) -> HeapHeader* {
-  return FitSearch(size, GetHeapStartHeader());
+  return FitSearch(GetHeapStartHeader(), size);
 }
 
 } // namespace hyundeok::allocator::linked_list

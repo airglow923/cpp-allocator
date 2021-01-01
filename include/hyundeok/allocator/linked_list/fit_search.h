@@ -3,24 +3,19 @@
 
 #include "hyundeok/allocator/allocator_types.h"
 
-#if defined(__cpp_concepts) && __cpp_concepts >= 201907L
-#include <concepts>
-#else
 #include <type_traits>
-#endif
 
 namespace hyundeok {
 namespace allocator {
 namespace linked_list {
 
-auto FitSearch(SizeT size, HeapHeader* begin) -> HeapHeader*;
+template <typename T>
+concept HeapComparePolicy = std::is_invocable_r_v<bool, T, HeapHeader*, SizeT>;
 
-#if defined(__cpp_concepts) && __cpp_concepts >= 201907L
-template <std::invocable<HeapHeader*, SizeT> I>
-#else
-template <typename I>
-#endif
-auto FitSearch(SizeT size, HeapHeader* begin, I op) -> HeapHeader*;
+auto FitSearch(HeapHeader* begin, SizeT size) -> HeapHeader*;
+
+auto FitSearch(HeapHeader* begin, SizeT size, HeapComparePolicy auto op)
+    -> HeapHeader*;
 
 } // namespace linked_list
 } // namespace allocator
