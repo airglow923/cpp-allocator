@@ -3,6 +3,13 @@
 CMAKE_CXX_COMPILER=
 CLANG_REQUIRED_VERSION=10
 GCC_REQUIRED_VERSION=10
+DIR_FOUND=
+CMAKE_DIR=".."
+
+if [ -d "$1" ]; then
+  DIR_FOUND=1
+  CMAKE_DIR="$1"
+fi
 
 if [ -f /bin/clang++ ]; then
   CLANG_VERSION=`clang --version | grep clang | sed -E 's/.* (.*)-.*$/\1/'`
@@ -28,12 +35,14 @@ if [ ! "$CMAKE_CXX_COMPILER" ]; then
   fi
 fi
 
-if [ ! -d build ]; then
-  mkdir build
-else
-  rm -rf build/*
+if [ ! "$DIR_FOUND" ]; then
+  if [ ! -d build ]; then
+    mkdir build
+  else
+    rm -rf build/*
+  fi
+
+  cd build
 fi
 
-cd build
-
-cmake -DCMAKE_CXX_COMPILER=$CMAKE_CXX_COMPILER "$@" ..
+cmake $CMAKE_DIR -DCMAKE_CXX_COMPILER=$CMAKE_CXX_COMPILER "$@"
