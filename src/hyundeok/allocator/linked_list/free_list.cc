@@ -12,19 +12,20 @@ auto GetFreeListHead() -> HeapHeader*& {
 auto AddFreeListNode(HeapHeader* node) -> void {
   auto*& iter = GetFreeListHead();
 
-  if (!iter) {
+  if (iter == nullptr) {
     iter = node;
+    node->next_ = iter;
     return;
   }
 
-  for (; iter->next_; iter = iter->next_) continue;
+  for (; iter->next_ != nullptr; iter = iter->next_) continue;
   iter = node;
 }
 
 auto RemoveFreeListNode(HeapHeader* node) -> void {
   auto*& iter = GetFreeListHead();
 
-  if (!iter) return;
+  if (iter == nullptr) return;
 
   if (iter == node) {
     iter = nullptr;
