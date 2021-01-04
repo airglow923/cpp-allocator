@@ -9,9 +9,11 @@ namespace allocator {
 auto GetHeapStart() -> void*;
 auto GetHeapStartHeader() -> HeapHeader*;
 auto GetHeapTop() -> HeapHeader*&;
+auto GetHeapEnd() -> HeapHeader*;
 auto AlignHeap(SizeT n) -> WordT;
 auto AllocateSize(SizeT size) -> SizeT;
 auto RequestHeap(SizeT size) -> HeapHeader*;
+auto ConvertPtrToCharPtr(void* ptr) -> char*;
 auto ConvertPtrToHeapHeader(void* ptr) -> HeapHeader*;
 auto InitializeHeapHeader(HeapHeader* heap, SizeT size) -> void;
 auto FindMatchHeap(HeapHeader* heap, SizeT size) -> bool;

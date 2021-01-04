@@ -21,6 +21,15 @@ auto GetHeapTop() -> HeapHeader*& {
   return top;
 }
 
+/**
+ * Return an address pointing to one past the end of a given heap.
+ */
+
+auto GetHeapEnd(HeapHeader* heap) -> HeapHeader* {
+  return ConvertPtrToHeapHeader(ConvertPtrToCharPtr(heap) +
+                                AllocateSize(heap->size_));
+}
+
 auto AlignHeap(SizeT n) -> WordT {
   return (n + sizeof(WordT) - 1) & ~(sizeof(WordT) - 1);
 }
@@ -41,10 +50,15 @@ auto RequestHeap(SizeT size) -> HeapHeader* {
   auto* heap = static_cast<HeapHeader*>(sbrk(0));
 
   if (sbrk(AllocateSize(size)) == reinterpret_cast<void*>(-1))
-    heap = nullptr;
+    return nullptr;
+
+  InitializeHeapHeader(heap, size);
 
   return heap;
 }
+
+// for 1-byte arithmeitc operations on pointer
+auto ConvertPtrToCharPtr(void* ptr) -> char* { return static_cast<char*>(ptr); }
 
 auto ConvertPtrToHeapHeader(void* ptr) -> HeapHeader* {
   return static_cast<HeapHeader*>(ptr);
@@ -56,6 +70,8 @@ auto GetHeapHeader(void* heap) -> HeapHeader* {
 }
 
 auto InitializeHeapHeader(HeapHeader* heap, SizeT size) -> void {
+  assert(heap != nullptr);
+
   heap->size_ = size;
   heap->used_ = false;
   heap->next_ = nullptr;
