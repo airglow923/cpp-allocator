@@ -2,6 +2,8 @@
 
 #include "hyundeok/allocator/allocator_utils.h"
 
+#include <cassert>
+
 namespace hyundeok::allocator::linked_list {
 
 auto GetFreeListHead() -> HeapHeader*& {
@@ -11,10 +13,10 @@ auto GetFreeListHead() -> HeapHeader*& {
 
 auto AddFreeListNode(HeapHeader* node) -> void {
   auto*& head = GetFreeListHead();
+  node->next_ = head;
 
   if (head == nullptr) {
     head = node;
-    node->next_ = head;
     return;
   }
 
@@ -29,18 +31,22 @@ auto AddFreeListNode(HeapHeader* node) -> void {
   iter->next_ = node;
 }
 
-auto RemoveFreeListNode(HeapHeader* node) -> void {
+auto RemoveFreeListNode(HeapHeader* node) -> HeapHeader* {
   auto*& head = GetFreeListHead();
+  auto* iter = head;
 
-  if (head == nullptr) return;
+  assert(head != nullptr && node != nullptr);
 
-  if (head == node) {
-    head = head->next_;
-  } else {
-    auto* iter = head;
-    for (; iter->next_ != node; iter = iter->next_) continue;
-    iter->next_ = node->next_;
+  for (; iter->next_ != node; iter = iter->next_) {
+    // when iterates through all nodes but could not find node
+    if (iter == head)
+      return nullptr;
   }
+
+  node->used_ = true;
+  iter->next_ = node->next_;
+
+  return iter;
 }
 
 } // namespace hyundeok::allocator::linked_list
