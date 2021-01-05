@@ -6,6 +6,16 @@
 
 namespace hyundeok::allocator::linked_list {
 
+namespace detail {
+
+auto CoalesceNode(HeapHeader* lhs, HeapHeader* rhs) -> HeapHeader* {
+  lhs->next_ = rhs->next_;
+  lhs->size_ += AllocateSize(rhs->size_);
+  return lhs;
+}
+
+}
+
 auto GetFreeListHead() -> HeapHeader*& {
   static HeapHeader* free_list_head = nullptr;
   return free_list_head;
@@ -47,6 +57,34 @@ auto RemoveFreeListNode(HeapHeader* node) -> HeapHeader* {
   iter->next_ = node->next_;
 
   return iter;
+}
+
+auto CoalesceNeighbor(HeapHeader* node) -> HeapHeader* {
+  // when neighbor is prior to node
+  auto* iter = GetFreeListHead;
+  HeapHeader* previous = nullptr;
+
+  assert(iter != nullptr && node != nullptr);
+
+  for (; iter->next_ != node; iter = iter->next_) continue;
+
+  // when the previous heap is physically prior to node
+  if (GetHeapEnd(iter) == node) {
+    // combine node with previous heap
+    previous = detail::CoalesceNode(iter, node);
+  }
+
+  // when neighbor is next to node
+  // when the next heap is physically next to node
+  if (GetHeapEnd(node) == node->next_) {
+    // combine node with next heap
+    if (previous != nullptr)
+      previous = detail::CoalesceNode(node, node->next_);
+    else
+      detail::CoalesceNode(node, node->next_);
+  }
+
+  return previous != nullptr ? previous : node;
 }
 
 } // namespace hyundeok::allocator::linked_list
