@@ -61,7 +61,7 @@ auto RemoveFreeListNode(HeapHeader* node) -> HeapHeader* {
 
 auto CoalesceNeighbor(HeapHeader* node) -> HeapHeader* {
   // when neighbor is prior to node
-  auto* iter = GetFreeListHead;
+  auto* iter = GetFreeListHead();
   HeapHeader* previous = nullptr;
 
   assert(iter != nullptr && node != nullptr);
