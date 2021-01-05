@@ -9,7 +9,7 @@ namespace allocator {
 auto GetHeapStart() -> void*;
 auto GetHeapStartHeader() -> HeapHeader*;
 auto GetHeapTop() -> HeapHeader*&;
-auto GetHeapEnd() -> HeapHeader*;
+auto GetHeapEnd(HeapHeader* heap) -> HeapHeader*;
 auto AlignHeap(SizeT n) -> WordT;
 auto AllocateSize(SizeT size) -> SizeT;
 auto RequestHeap(SizeT size) -> HeapHeader*;
