@@ -7,8 +7,7 @@ namespace hyundeok {
 namespace allocator {
 
 auto GetHeapStart() -> void*;
-auto GetHeapStartHeader() -> HeapHeader*;
-auto GetHeapTop() -> HeapHeader*&;
+auto GetHeapStartHeader() -> HeapHeader*&;
 auto GetHeapEnd(HeapHeader* heap) -> HeapHeader*;
 auto AlignHeap(SizeT n) -> WordT;
 auto AllocateSize(SizeT size) -> SizeT;
