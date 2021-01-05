@@ -20,7 +20,6 @@ auto GetHeapStartHeader() -> HeapHeader*& {
 /**
  * Return an address pointing to one past the end of a given heap.
  */
-
 auto GetHeapEnd(HeapHeader* heap) -> HeapHeader* {
   return ConvertPtrToHeapHeader(ConvertPtrToCharPtr(heap) +
                                 AllocateSize(heap->size_));
@@ -29,6 +28,11 @@ auto GetHeapEnd(HeapHeader* heap) -> HeapHeader* {
 auto GetSentinelNode() -> HeapHeader* {
   static HeapHeader sentinel;
   return &sentinel;
+}
+
+auto GetHeapHeader(void* heap) -> HeapHeader* {
+  return ConvertPtrToHeapHeader(ConvertPtrToCharPtr(heap) - sizeof(HeapHeader) +
+                                sizeof(WordT));
 }
 
 auto AlignHeap(SizeT n) -> WordT {
@@ -63,11 +67,6 @@ auto ConvertPtrToCharPtr(void* ptr) -> char* { return static_cast<char*>(ptr); }
 
 auto ConvertPtrToHeapHeader(void* ptr) -> HeapHeader* {
   return static_cast<HeapHeader*>(ptr);
-}
-
-auto GetHeapHeader(void* heap) -> HeapHeader* {
-  return ConvertPtrToHeapHeader(static_cast<char*>(heap) - sizeof(HeapHeader) +
-                                sizeof(WordT));
 }
 
 auto InitializeHeapHeader(HeapHeader* heap, SizeT size) -> void {
