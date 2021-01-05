@@ -9,15 +9,22 @@ auto SequentialAllocate(SizeT size) -> void* {
   size = AlignHeap(size);
 
   auto* heap = RequestHeap(size);
-  auto*& top = GetHeapTop();
+  auto*& start = GetHeapStartHeader();
   void* data = nullptr;
 
-  if (heap != nullptr) {
-    heap->size_ = size;
-    heap->used_ = true;
-    top->next_ = heap;
-    top = heap;
-    data = heap->data_;
+  if (heap == nullptr)
+    return nullptr;
+
+  heap->size_ = size;
+  heap->used_ = true;
+  heap->next_ = GetSentinelNode();
+  data = heap->next_;
+
+  if (start == GetSentinelNode()) {
+    start = heap;
+  } else {
+    start->next_ = heap;
+    start = heap;
   }
 
   return data;
@@ -35,7 +42,7 @@ auto SequentialFree(void* ptr) -> int {
   auto result = brk(GetHeapStart());
 
   if (result != -1)
-    GetHeapTop() = GetHeapStartHeader();
+    GetHeapStartHeader() = static_cast<HeapHeader*>(GetHeapStart());
 
   return result;
 }

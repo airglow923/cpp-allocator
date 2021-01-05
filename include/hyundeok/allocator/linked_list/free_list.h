@@ -9,7 +9,8 @@ namespace linked_list {
 
 auto GetFreeListHead() -> HeapHeader*&;
 auto AddFreeListNode(HeapHeader* node) -> void;
-auto RemoveFreeListNode(HeapHeader* node) -> void;
+auto RemoveFreeListNode(HeapHeader* node) -> HeapHeader*;
+auto CoalesceNeighbor(HeapHeader* node) -> HeapHeader*;
 
 }
 }

@@ -5,23 +5,42 @@
 
 #include <unistd.h>
 
-#include <limits>
+#include <utility>     // declval
+#include <type_traits> // is_same
 
-using hyundeok::allocator::AlignHeap;
-// using hyundeok::allocator::GetHeapHeader;
-using hyundeok::allocator::GetHeapStart;
-using hyundeok::allocator::GetHeapTop;
-using hyundeok::allocator::HeapHeader;
-using hyundeok::allocator::kMaxPtrAddress;
-using hyundeok::allocator::RequestHeap;
-using hyundeok::allocator::SizeT;
-using hyundeok::allocator::WordT;
+using namespace hyundeok::allocator;
 
 namespace {
+
+constexpr auto word_size = sizeof(SizeT);
 
 auto ComputeSize(SizeT size) -> SizeT {
   SizeT computed = size / sizeof(WordT) * 8;
   return size % sizeof(WordT) == 0 ? computed : computed + sizeof(WordT);
+}
+
+TEST(TestComputeDataAlignment, AlignmentOnDiffArch) {
+  switch (word_size) {
+    case 4: EXPECT_EQ(ComputeDataAlignment(), 3);
+    case 8: EXPECT_EQ(ComputeDataAlignment(), 7);
+  }
+}
+
+TEST(TestGetHeapStart, EqualToHeapStart) {
+  auto* head = sbrk(0);
+
+  ASSERT_NE(head, reinterpret_cast<void*>(-1));
+  EXPECT_EQ(GetHeapStart(), head);
+}
+
+TEST(TestGetHeapStartHeader, HeapStartSentinel) {
+  EXPECT_EQ(GetHeapStartHeader(), GetSentinelNode());
+}
+
+TEST(TestGetHeapEnd, HeapEndNextFreeBlock) {
+  auto* heap1 = RequestHeap(10);
+  auto* heap2 = RequestHeap(30);
+  ASSERT_EQ(GetHeapEnd(GetHeapEnd(heap1)), GetHeapEnd(heap2));
 }
 
 TEST(TestAlignHeap, AlignSize) {
@@ -46,21 +65,108 @@ TEST(TestAlignHeap, NegativeAlignSize) {
   EXPECT_EQ(AlignHeap(-256), static_cast<SizeT>(-1) - 255);
 }
 
-TEST(TestGetHeapStart, CorrectHeapStart) {
-  EXPECT_EQ(sbrk(0), GetHeapStart());
-  ASSERT_NE(nullptr, GetHeapStart());
+TEST(TestAllocateSize, CorrectSize) {
+  const SizeT i = 32;
+  EXPECT_EQ(AllocateSize(i),
+            i + sizeof(HeapHeader) - ComputeDataAlignment());
 }
 
-TEST(TestGetHeapTop, InitialHeapTop) {
-  ASSERT_EQ(GetHeapTop(), static_cast<HeapHeader*>(GetHeapStart()));
-}
-
-// TEST(TestRequestHeap, NegativeSize) {
-//   ASSERT_DEATH(RequestHeap(-1), "");
-// }
+// TEST(TestRequestHeap, NegativeSize) { ASSERT_DEATH(RequestHeap(-1), ""); }
 
 // TEST(TestRequestHeap, ExceedingMax) {
 //   ASSERT_DEATH(RequestHeap(SizeT(kMaxPtrAddress) + 1), "");
 // }
+
+TEST(TestGetHeapHeader, GetHeapHeader) {
+  auto* heap = RequestHeap(10);
+  auto* header = GetHeapHeader(heap->data_);
+  EXPECT_EQ(heap, header);
+}
+
+TEST(TestConvertPtrToCharPtr, TestAnyPtr) {
+  // since macros prioritize a delimiter (comma) over expression, wrap argument
+  // with parentheses
+  EXPECT_TRUE(
+      (std::is_same_v<decltype(ConvertPtrToCharPtr(std::declval<short*>())),
+                      char*>));
+  EXPECT_TRUE(
+      (std::is_same_v<decltype(ConvertPtrToCharPtr(std::declval<int*>())),
+                      char*>));
+  EXPECT_TRUE(
+      (std::is_same_v<decltype(ConvertPtrToCharPtr(std::declval<long*>())),
+                      char*>));
+  EXPECT_TRUE(
+      (std::is_same_v<decltype(ConvertPtrToCharPtr(std::declval<long long*>())),
+                      char*>));
+  EXPECT_TRUE(
+      (std::is_same_v<decltype(ConvertPtrToCharPtr(std::declval<float*>())),
+                      char*>));
+  EXPECT_TRUE(
+      (std::is_same_v<decltype(ConvertPtrToCharPtr(std::declval<double*>())),
+                      char*>));
+  EXPECT_TRUE(
+      (std::is_same_v<decltype(ConvertPtrToCharPtr(std::declval<double*>())),
+                      char*>));
+}
+
+TEST(TestConvertPtrToHeapHeader, TestAnyPtr) {
+  EXPECT_TRUE(
+      (std::is_same_v<decltype(ConvertPtrToHeapHeader(std::declval<short*>())),
+                      HeapHeader*>));
+  EXPECT_TRUE(
+      (std::is_same_v<decltype(ConvertPtrToHeapHeader(std::declval<int*>())),
+                      HeapHeader*>));
+  EXPECT_TRUE(
+      (std::is_same_v<decltype(ConvertPtrToHeapHeader(std::declval<long*>())),
+                      HeapHeader*>));
+  EXPECT_TRUE((std::is_same_v<decltype(ConvertPtrToHeapHeader(
+                                  std::declval<long long*>())),
+                              HeapHeader*>));
+  EXPECT_TRUE(
+      (std::is_same_v<decltype(ConvertPtrToHeapHeader(std::declval<float*>())),
+                      HeapHeader*>));
+  EXPECT_TRUE(
+      (std::is_same_v<decltype(ConvertPtrToHeapHeader(std::declval<double*>())),
+                      HeapHeader*>));
+  EXPECT_TRUE(
+      (std::is_same_v<decltype(ConvertPtrToHeapHeader(std::declval<double*>())),
+                      HeapHeader*>));
+}
+
+TEST(TestInitializeHeapHeader, InitializeHeap) {
+  const int size = 10;
+  auto* heap = RequestHeap(size);
+  InitializeHeapHeader(heap, size);
+
+  EXPECT_EQ(heap->size_, size);
+  EXPECT_EQ(heap->used_, false);
+  EXPECT_EQ(heap->next_, GetSentinelNode());
+}
+
+TEST(TestFindMatchHeap, FindMatchHeap) {
+  auto* heap1 = RequestHeap(10);
+  auto* heap2 = RequestHeap(16);
+
+  heap2->used_ = true;
+
+  EXPECT_TRUE(FindMatchHeap(heap1, 9));
+  EXPECT_TRUE(FindMatchHeap(heap1, 10));
+  EXPECT_FALSE(FindMatchHeap(heap1, 11));
+
+  EXPECT_FALSE(FindMatchHeap(heap2, 15));
+  EXPECT_FALSE(FindMatchHeap(heap2, 16));
+  EXPECT_FALSE(FindMatchHeap(heap2, 17));
+}
+
+TEST(TestSplitHeap, SplitHeap) {
+  const SizeT size = 64;
+  auto* heap1 = RequestHeap(size);
+  auto* split1 = SplitHeap(heap1, 10);
+
+  EXPECT_NE(split1, nullptr);
+  EXPECT_EQ(heap1->size_, size - AllocateSize(10));
+  EXPECT_EQ(split1->size_, 10);
+  EXPECT_EQ(GetHeapEnd(heap1), split1);
+}
 
 } // namespace
