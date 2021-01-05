@@ -6,6 +6,7 @@
 namespace hyundeok {
 namespace allocator {
 
+auto ComputeDataAlignment() -> SizeT;
 auto GetHeapStart() -> void*;
 auto GetHeapStartHeader() -> HeapHeader*&;
 auto GetHeapEnd(HeapHeader* heap) -> HeapHeader*;
