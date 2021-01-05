@@ -13,7 +13,7 @@ auto GetHeapStart() -> void* {
 }
 
 auto GetHeapStartHeader() -> HeapHeader*& {
-  static auto* start = static_cast<HeapHeader*>(GetHeapStart());
+  static auto* start = GetSentinelNode();
   return start;
 }
 
@@ -24,6 +24,11 @@ auto GetHeapStartHeader() -> HeapHeader*& {
 auto GetHeapEnd(HeapHeader* heap) -> HeapHeader* {
   return ConvertPtrToHeapHeader(ConvertPtrToCharPtr(heap) +
                                 AllocateSize(heap->size_));
+}
+
+auto GetSentinelNode() -> HeapHeader* {
+  static HeapHeader sentinel;
+  return &sentinel;
 }
 
 auto AlignHeap(SizeT n) -> WordT {
