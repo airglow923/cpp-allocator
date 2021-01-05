@@ -18,8 +18,8 @@ inline constexpr auto kMaxPtrAddress = std::numeric_limits<long>::max();
  */
 struct HeapHeader {
   SizeT size_;
-  bool used_;
   HeapHeader* next_;
+  bool used_;
   char data_[1];
 };
 
