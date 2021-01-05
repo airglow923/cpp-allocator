@@ -3,9 +3,10 @@
 #include <unistd.h>
 
 #include <cassert>
-#include <utility>
 
 namespace hyundeok::allocator {
+
+auto ComputeDataAlignment() -> SizeT { return sizeof(WordT) - sizeof(bool); }
 
 auto GetHeapStart() -> void* {
   static void* const heap_start = sbrk(0);
@@ -32,7 +33,7 @@ auto GetSentinelNode() -> HeapHeader* {
 
 auto GetHeapHeader(void* heap) -> HeapHeader* {
   return ConvertPtrToHeapHeader(ConvertPtrToCharPtr(heap) - sizeof(HeapHeader) +
-                                sizeof(WordT));
+                                ComputeDataAlignment());
 }
 
 auto AlignHeap(SizeT n) -> WordT {
@@ -46,7 +47,7 @@ auto AlignHeap(SizeT n) -> WordT {
  * of an array with length 1.
  */
 auto AllocateSize(SizeT size) -> SizeT {
-  return size + sizeof(HeapHeader) - sizeof(std::declval<HeapHeader>().data_);
+  return size + sizeof(HeapHeader) - ComputeDataAlignment();
 }
 
 auto RequestHeap(SizeT size) -> HeapHeader* {
@@ -74,7 +75,7 @@ auto InitializeHeapHeader(HeapHeader* heap, SizeT size) -> void {
 
   heap->size_ = size;
   heap->used_ = false;
-  heap->next_ = nullptr;
+  heap->next_ = GetSentinelNode();
 }
 
 auto FindMatchHeap(HeapHeader* heap, SizeT size) -> bool {
@@ -82,9 +83,17 @@ auto FindMatchHeap(HeapHeader* heap, SizeT size) -> bool {
 }
 
 auto SplitHeap(HeapHeader* heap, SizeT size) -> HeapHeader* {
-  heap->size_ -= AllocateSize(size);
-  HeapHeader* new_heap = ConvertPtrToHeapHeader(heap->data_ + heap->size_);
-  InitializeHeapHeader(heap, size);
+  const auto requested = AllocateSize(size);
+
+  if (heap->size_ < requested)
+    return nullptr;
+
+  auto* new_heap =
+      ConvertPtrToHeapHeader(ConvertPtrToCharPtr(GetHeapEnd(heap)) - requested);
+  heap->size_ -= requested;
+  InitializeHeapHeader(new_heap, size);
+  new_heap->next_ = heap->next_;
+
   return new_heap;
 }
 
