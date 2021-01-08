@@ -8,12 +8,6 @@
 
 namespace hyundeok::allocator::linked_list {
 
-auto GetSentinelNode() -> HeapHeader* {
-  static HeapHeader sentinel;
-  sentinel.next_ = &sentinel;
-  return &sentinel;
-}
-
 auto GetFreeListHead() -> HeapHeader*& {
   static HeapHeader* free_list_head = GetSentinelNode();
   return free_list_head;
