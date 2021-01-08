@@ -8,65 +8,15 @@
 
 namespace hyundeok::allocator::linked_list {
 
-auto AllocateSize(SizeT size) -> SizeT {
-  return size + sizeof(HeapHeader) - ComputeDataAlignment();
-}
-
-auto ConvertPtrToHeapHeader(void* ptr) -> HeapHeader* {
-  return static_cast<HeapHeader*>(ptr);
-}
-
-auto FindMatchHeap(HeapHeader* heap, SizeT size) -> bool {
-  return !heap->used_ && heap->size_ >= size;
-}
-
-auto InitializeHeapHeader(HeapHeader* heap, SizeT size) -> void {
-  assert(heap != nullptr);
-
-  heap->size_ = size;
-  heap->used_ = false;
-  heap->next_ = GetSentinelNode();
-}
-
-auto GetHeapStartHeader() -> HeapHeader*& {
-  static auto* start = GetSentinelNode();
-  return start;
-}
-
-/**
- * Return an address pointing to one past the end of a given heap.
- */
-auto GetHeapEnd(HeapHeader* heap) -> HeapHeader* {
-  return ConvertPtrToHeapHeader(ConvertPtrToCharPtr(heap) +
-                                AllocateSize(heap->size_));
-}
-
 auto GetSentinelNode() -> HeapHeader* {
   static HeapHeader sentinel;
+  sentinel.next_ = &sentinel;
   return &sentinel;
-}
-
-auto GetHeapHeader(void* heap) -> HeapHeader* {
-  return ConvertPtrToHeapHeader(ConvertPtrToCharPtr(heap) - sizeof(HeapHeader) +
-                                ComputeDataAlignment());
 }
 
 auto GetFreeListHead() -> HeapHeader*& {
   static HeapHeader* free_list_head = GetSentinelNode();
   return free_list_head;
-}
-
-auto RequestHeap(SizeT size) -> HeapHeader* {
-  assert(size <= kMaxPtrAddress);
-
-  auto* heap = static_cast<HeapHeader*>(sbrk(0));
-
-  if (sbrk(AllocateSize(size)) == reinterpret_cast<void*>(-1))
-    return nullptr;
-
-  InitializeHeapHeader(heap, size);
-
-  return heap;
 }
 
 auto AddFreeListNode(HeapHeader* node) -> void {
@@ -156,42 +106,6 @@ auto SplitHeap(HeapHeader* heap, SizeT size) -> HeapHeader* {
   new_heap->next_ = heap->next_;
 
   return new_heap;
-}
-
-auto SequentialAllocate(SizeT size) -> void* {
-  size = AlignHeap(size);
-
-  auto* heap = RequestHeap(size);
-  auto*& start = GetHeapStartHeader();
-  void* data = nullptr;
-
-  if (heap == nullptr)
-    return nullptr;
-
-  heap->size_ = size;
-  heap->used_ = true;
-  heap->next_ = GetSentinelNode();
-  data = heap->next_;
-
-  if (start == GetSentinelNode()) {
-      start = heap;
-    } else {
-        start->next_ = heap;
-        start = heap;
-      }
-
-  return data;
-}
-
-auto SequentialFree(void* ptr) -> int {
-  auto* heap_header = GetHeapHeader(ptr);
-  heap_header->used_ = false;
-  auto result = brk(GetHeapStart());
-
-  if (result != -1)
-    GetHeapStartHeader() = static_cast<HeapHeader*>(GetHeapStart());
-
-  return result;
 }
 
 } // namespace hyundeok::allocator::linked_list

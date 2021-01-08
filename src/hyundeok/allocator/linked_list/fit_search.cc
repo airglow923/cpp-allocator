@@ -1,6 +1,6 @@
 #include "hyundeok/allocator/linked_list/fit_search.h"
 
-#include "hyundeok/allocator/linked_list/free_list.h"
+#include "hyundeok/allocator/allocator_utils.h"
 
 namespace hyundeok::allocator::linked_list {
 
