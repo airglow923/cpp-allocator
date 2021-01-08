@@ -61,7 +61,8 @@ auto GetHeapEnd(HeapHeader* heap) -> HeapHeader* {
 }
 
 auto GetSentinelNode() -> HeapHeader* {
-  static HeapHeader sentinel{.next_ = &sentinel};
+  static HeapHeader sentinel{
+      .size_ = 0, .next_ = &sentinel, .used_ = false, .data_ = {0}};
   return &sentinel;
 }
 
