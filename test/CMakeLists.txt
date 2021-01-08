@@ -43,11 +43,13 @@ endif()
 
 ################################################################################
 
+set(TEST_FILES
+    test_allocator_utils.cc
+    test_free_list.cc)
+
 add_executable(Test "")
 
-target_sources(Test
-  PRIVATE
-      test_allocator_utils.cc)
+target_sources(Test PRIVATE ${TEST_FILES})
 
 target_link_libraries(Test
   PRIVATE ${PROJECT_NAME}

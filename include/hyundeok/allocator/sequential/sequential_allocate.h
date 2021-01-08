@@ -8,9 +8,6 @@ namespace hyundeok {
 namespace allocator {
 namespace sequential {
 
-auto SequentialAllocate(SizeT size) -> void*;
-auto SequentialFree(void* ptr) -> int;
-
 } // namespace sequential
 } // namespace allocator
 } // namespace hyundeok
