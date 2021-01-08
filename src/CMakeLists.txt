@@ -1,3 +1,12 @@
+set(PROJECT_COMPILE_FLAGS
+		-Wall
+		-Wextra
+		-Werror
+		-Wcast-align
+		-Wcast-qual
+		-Wdiv-by-zero
+		-fexceptions)
+
 set(PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 
 set(INCLUDE_FILES
@@ -25,6 +34,8 @@ set(SOURCE_FILES
 
 add_library(${PROJECT_NAME} SHARED "")
 
+target_compile_options(${PROJECT_NAME} PRIVATE ${PROJECT_COMPILE_FLAGS})
+
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         $<BUILD_INTERFACE:${PROJECT_INCLUDE_DIR}>
@@ -40,16 +51,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION ${CPP_ALLOCATOR_VERSION_MAJOR}
     PUBLIC_HEADER "${INCLUDE_FILES}")
-
-target_compile_options(${PROJECT_NAME}
-    PRIVATE
-        -Wall
-        -Wextra
-        -Werror
-        -Wcast-align
-        -Wcast-qual
-        -Wdiv-by-zero
-        -fexceptions)
 
 include(GNUInstallDirs)
 
