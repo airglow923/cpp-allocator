@@ -42,6 +42,10 @@ TEST(TestGetHeapEnd, HeapEndNextFreeBlock) {
   ASSERT_EQ(GetHeapEnd(GetHeapEnd(heap1)), GetHeapEnd(heap2));
 }
 
+TEST(TestGetSentinelNode, SentinelNodeNext) {
+  EXPECT_EQ(GetSentinelNode()->next_, GetSentinelNode());
+}
+
 TEST(TestAllocateSize, CorrectSize) {
   const SizeT i = 32;
   EXPECT_EQ(AllocateSize(i),
