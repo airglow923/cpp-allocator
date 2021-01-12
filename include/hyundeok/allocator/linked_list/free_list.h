@@ -67,7 +67,7 @@ private:
   static auto CoalesceNode(Node_ lhs, Node_ rhs) -> Node_;
 
   [[nodiscard]] static auto CoalesceNeighbor(const_iterator head,
-                                             const_iterator node) -> iterator;
+                                             const_iterator current) -> iterator;
 
   [[nodiscard]] static auto SplitHeap(const_iterator node, SizeT size)
       -> iterator;
