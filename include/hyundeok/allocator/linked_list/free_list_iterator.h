@@ -6,7 +6,7 @@
 
 #include <iterator>    // iterator_traits, forward_iterator_tag
 #include <type_traits> // conditional
-#include <compare>     // strong_ordering"
+#include <compare>     // strong_ordering
 
 namespace hyundeok::allocator::linked_list {
 
