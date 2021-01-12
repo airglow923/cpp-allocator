@@ -26,7 +26,7 @@ string (REGEX REPLACE ".*clang version ([0-9]+\\.[0-9]+).*" "\\1"
 if (CLANG_VERSION_STRING GREATER_EQUAL 10)
   find_program(CLANG_TIDY_FOUND NAMES clang-tidy)
   if (CLANG_TIDY_FOUND)
-    set(CMAKE_CXX_CLANG_TIDY "clang-tidy; --header-filter=.*;")
+    set(CMAKE_CXX_CLANG_TIDY clang-tidy --header-filter=.*)
   endif()
 endif()
 
