@@ -14,10 +14,14 @@
 namespace hyundeok::allocator::linked_list {
 
 HYUNDEOK_FREELIST_SIG_()::FreeList()
-    : root_{.size_ = 0, .next_ = nullptr, .used_ = false, .data_ = {0}} {}
+    : root_{.size_ = 0, .next_ = nullptr, .used_ = false, .data_ = {0}},
+      compare_{}, search_{} {}
 
 HYUNDEOK_FREELIST_SIG_()::FreeList(Self_&& other)
-    : root_{std::move(other.root_)} {}
+    : root_{std::move(other.root_)}, compare_{std::move(other.compare_)},
+      search_{std::move(other.search_)} {
+  other.root_ = nullptr;
+}
 
 // NOLINTNEXTLINE(modernize-use-equals-default)
 HYUNDEOK_FREELIST_SIG_()::~FreeList() {}
