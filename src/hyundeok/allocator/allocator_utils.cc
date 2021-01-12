@@ -23,11 +23,9 @@ auto ConvertPtrToHeapHeader(void* ptr) -> HeapHeader* {
   return static_cast<HeapHeader*>(ptr);
 }
 
-struct FindMatchHeap {
-  auto operator()(HeapHeader* heap, SizeT size) -> bool {
-    return !heap->used_ && heap->size_ >= size;
-  }
-};
+auto FindMatchHeap(HeapHeader* heap, SizeT size) -> bool {
+  return !heap->used_ && heap->size_ >= size;
+}
 
 auto InitializeHeapHeader(HeapHeader* heap, SizeT size) -> HeapHeader* {
   assert(heap != nullptr);
