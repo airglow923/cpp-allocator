@@ -3,8 +3,7 @@
 
 #include "hyundeok/allocator/allocator_types.h"
 
-namespace hyundeok {
-namespace allocator {
+namespace hyundeok::allocator {
 
 auto AlignHeap(SizeT n) -> WordT;
 auto AllocateSize(SizeT size) -> SizeT;
@@ -20,7 +19,8 @@ auto GetHeapEnd(HeapHeader* heap) -> HeapHeader*;
 auto GetSentinelNode() -> HeapHeader*;
 auto RequestHeap(SizeT size) -> HeapHeader*;
 
-} // namespace allocator
-} // namespace hyundeok
+struct DefaultHeapSearchPolicy {};
+
+} // namespace hyundeok::allocator
 
 #endif

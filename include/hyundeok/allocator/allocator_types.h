@@ -4,8 +4,7 @@
 #include <cstdint>
 #include <limits>
 
-namespace hyundeok {
-namespace allocator {
+namespace hyundeok::allocator {
 
 using WordT = std::uintptr_t;
 using SizeT = std::size_t;
@@ -23,7 +22,6 @@ struct HeapHeader {
   char data_[1];
 };
 
-} // namespace allocator
-} // namespace hyundeok
+} // namespace hyundeok::allocator
 
 #endif
