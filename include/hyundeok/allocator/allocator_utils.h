@@ -19,8 +19,6 @@ auto GetHeapEnd(HeapHeader* heap) -> HeapHeader*;
 auto GetSentinelNode() -> HeapHeader*;
 auto RequestHeap(SizeT size) -> HeapHeader*;
 
-struct DefaultHeapSearchPolicy {};
-
 } // namespace hyundeok::allocator
 
 #endif
