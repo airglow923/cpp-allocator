@@ -7,7 +7,9 @@
 namespace hyundeok::allocator::linked_list {
 
 struct NextFitSearch {
-  auto operator()(SizeT size, HeapComparePolicy auto compare) -> HeapHeader*;
+  auto operator()(HeapHeader* begin, SizeT size, HeapComparePolicy auto compare)
+      -> HeapHeader*;
+  HeapHeader* cur_ = nullptr;
 };
 
 } // namespace hyundeok::allocator::linked_list

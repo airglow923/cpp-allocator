@@ -6,7 +6,8 @@
 namespace hyundeok::allocator::linked_list {
 
 struct BestFitSearch {
-  auto operator()(SizeT size, HeapComparePolicy auto compare) -> HeapHeader*;
+  auto operator()(HeapHeader* begin, SizeT size, HeapComparePolicy auto compare)
+      -> HeapHeader*;
 };
 
 } // namespace hyundeok::allocator::linked_list

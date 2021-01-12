@@ -1,5 +1,5 @@
-#ifndef _HYUNDEOK_ALLOCATOR_LINKED_LIST_FIT_SEARCH_H_
-#define _HYUNDEOK_ALLOCATOR_LINKED_LIST_FIT_SEARCH_H_
+#ifndef HYUNDEOK_ALLOCATOR_LINKED_LIST_FIT_SEARCH_H
+#define HYUNDEOK_ALLOCATOR_LINKED_LIST_FIT_SEARCH_H
 
 #include "hyundeok/allocator/concepts.h"
 #include "hyundeok/allocator/allocator_types.h"

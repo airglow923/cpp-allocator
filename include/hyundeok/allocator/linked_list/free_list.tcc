@@ -99,7 +99,7 @@ HYUNDEOK_FREELIST_SIG_(auto)::EraseAfter(const_iterator pos) -> iterator {
 }
 
 HYUNDEOK_FREELIST_SIG_(auto)::ReleaseNode(SizeT size) -> iterator {
-  auto* match = search_(size, compare_);
+  auto* match = search_(begin(), size, compare_);
   return SplitHeap(iterator{match}, size);
 }
 

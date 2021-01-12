@@ -7,9 +7,8 @@
 
 namespace hyundeok::allocator::linked_list {
 
-auto BestFitSearch::operator()(SizeT size, HeapComparePolicy auto compare)
-    -> HeapHeader* {
-  HeapHeader* begin = GetHeapStartHeader();
+auto BestFitSearch::operator()(HeapHeader* begin, SizeT size,
+                               HeapComparePolicy auto compare) -> HeapHeader* {
   HeapHeader* best = nullptr;
 
   for (; begin != nullptr; begin = begin->next_) {

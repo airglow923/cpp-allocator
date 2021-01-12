@@ -7,7 +7,7 @@
 namespace hyundeok::allocator::linked_list {
 
 struct FirstFitSearch {
-  auto operator()(SizeT size, HeapComparePolicy auto compare) -> HeapHeader*;
+  auto operator()(HeapHeader* head, SizeT size, HeapComparePolicy auto compare) -> HeapHeader*;
 };
 
 } // namespace hyundeok::allocator::linked_list

@@ -5,24 +5,17 @@
 
 namespace hyundeok::allocator::linked_list {
 
-namespace {
+auto NextFitSearch::operator()(HeapHeader* begin, SizeT size,
+                               HeapComparePolicy auto compare) -> HeapHeader* {
+  if (cur_ == nullptr)
+    cur_ = begin;
 
-auto GetCurrentHeap() -> HeapHeader*& {
-  static HeapHeader* current_heap = nullptr;
-  return current_heap;
-}
-
-} // namespace
-
-auto NextFitSearch::operator()(SizeT size, HeapComparePolicy auto compare)
-    -> HeapHeader* {
-  auto*& cur = GetCurrentHeap();
-  auto* fit = FitSearch(cur, size, compare);
+  auto* fit = FitSearch(cur_, size, compare);
 
   if (fit != nullptr)
-    cur = fit;
+    cur_ = fit;
   else
-    cur = GetHeapStartHeader();
+    cur_ = begin;
 
   return fit;
 }
