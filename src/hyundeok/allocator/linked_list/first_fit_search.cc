@@ -5,8 +5,9 @@
 
 namespace hyundeok::allocator::linked_list {
 
-auto FirstFitSearch(SizeT size) -> HeapHeader* {
-  return FitSearch(GetHeapStartHeader(), size);
+auto FirstFitSearch::operator()(SizeT size, HeapComparePolicy auto compare)
+    -> HeapHeader* {
+  return FitSearch(GetHeapStartHeader(), size, compare);
 }
 
 } // namespace hyundeok::allocator::linked_list

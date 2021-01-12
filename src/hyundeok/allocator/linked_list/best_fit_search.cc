@@ -7,12 +7,13 @@
 
 namespace hyundeok::allocator::linked_list {
 
-auto BestFitSearch(SizeT size) -> HeapHeader* {
+auto BestFitSearch::operator()(SizeT size, HeapComparePolicy auto compare)
+    -> HeapHeader* {
   HeapHeader* begin = GetHeapStartHeader();
   HeapHeader* best = nullptr;
 
   for (; begin != nullptr; begin = begin->next_) {
-    if (begin->size_ >= size && (best == nullptr || begin->size_ < best->size_))
+    if (compare(begin, size) && (best == nullptr || begin->size_ < best->size_))
       best = begin;
   }
 

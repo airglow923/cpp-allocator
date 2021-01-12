@@ -4,10 +4,6 @@
 
 namespace hyundeok::allocator::linked_list {
 
-auto FitSearch(HeapHeader* begin, SizeT size) -> HeapHeader* {
-  return FitSearch(begin, size, FindMatchHeap);
-}
-
 auto FitSearch(HeapHeader* begin, SizeT size, HeapComparePolicy auto op)
     -> HeapHeader* {
   HeapHeader* fit = nullptr;

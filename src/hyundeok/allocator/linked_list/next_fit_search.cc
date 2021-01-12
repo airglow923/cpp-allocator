@@ -7,20 +7,22 @@ namespace hyundeok::allocator::linked_list {
 
 namespace {
 
-auto GetHeapFit() -> HeapHeader*& {
-  static auto* heap_fit = GetHeapStartHeader();
-  return heap_fit;
+auto GetCurrentHeap() -> HeapHeader*& {
+  static HeapHeader* current_heap = nullptr;
+  return current_heap;
 }
 
 } // namespace
 
-auto NextFitSearch(SizeT size) -> HeapHeader* {
-  auto* fit = FitSearch(GetHeapFit(), size);
+auto NextFitSearch::operator()(SizeT size, HeapComparePolicy auto compare)
+    -> HeapHeader* {
+  auto*& cur = GetCurrentHeap();
+  auto* fit = FitSearch(cur, size, compare);
 
   if (fit != nullptr)
-    GetHeapFit() = fit;
+    cur = fit;
   else
-    GetHeapFit() = GetHeapStartHeader();
+    cur = GetHeapStartHeader();
 
   return fit;
 }
