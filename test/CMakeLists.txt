@@ -44,8 +44,7 @@ endif()
 ################################################################################
 
 set(TEST_FILES
-    test_allocator_utils.cc
-    test_free_list.cc)
+    test_allocator_utils.cc)
 
 add_executable(Test "")
 
