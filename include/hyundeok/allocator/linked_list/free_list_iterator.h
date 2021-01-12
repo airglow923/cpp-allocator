@@ -49,7 +49,7 @@ struct [[maybe_unused]] FreeListIterator {
 
   auto operator++(int) noexcept -> Self_;
 
-  auto operator<=>(const Self_& other) const -> std::strong_ordering;
+  auto operator<=>(const Self_& other) const = default;
 
   Node_ node_;
 };

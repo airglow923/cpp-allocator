@@ -42,12 +42,6 @@ auto FreeListIterator<constness>::operator++(int) noexcept -> Self_ {
   return tmp;
 }
 
-template <bool constness>
-auto FreeListIterator<constness>::operator<=>(const Self_& other) const
-    -> std::strong_ordering {
-  return node_ <=> other.node_;
-}
-
 } // namespace hyundeok::allocator::linked_list
 
 #endif
