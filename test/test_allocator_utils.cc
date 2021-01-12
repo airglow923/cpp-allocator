@@ -11,7 +11,7 @@ using namespace hyundeok::allocator;
 
 namespace {
 
-constexpr auto word_size = sizeof(SizeT);
+constexpr auto kWordSize = sizeof(SizeT);
 
 auto ComputeSize(SizeT size) -> SizeT {
   SizeT computed = size / sizeof(WordT) * 8;
@@ -19,7 +19,7 @@ auto ComputeSize(SizeT size) -> SizeT {
 }
 
 TEST(TestComputeDataAlignment, AlignmentOnDiffArch) {
-  switch (word_size) {
+  switch (kWordSize) {
     case 4: EXPECT_EQ(ComputeDataAlignment(), 3);
     case 8: EXPECT_EQ(ComputeDataAlignment(), 7);
   }
