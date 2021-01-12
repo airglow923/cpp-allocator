@@ -20,7 +20,7 @@ HYUNDEOK_FREELIST_SIG_()::FreeList()
 HYUNDEOK_FREELIST_SIG_()::FreeList(Self_&& other)
     : root_{std::move(other.root_)}, compare_{std::move(other.compare_)},
       search_{std::move(other.search_)} {
-  other.root_ = nullptr;
+  other.root_.next_ = nullptr;
 }
 
 // NOLINTNEXTLINE(modernize-use-equals-default)
@@ -103,7 +103,7 @@ HYUNDEOK_FREELIST_SIG_(auto)::EraseAfter(const_iterator pos) -> iterator {
 }
 
 HYUNDEOK_FREELIST_SIG_(auto)::ReleaseNode(SizeT size) -> iterator {
-  auto* match = search_(begin(), size, compare_);
+  auto* match = search_(begin().node_, size, compare_);
   return SplitHeap(iterator{match}, size);
 }
 
