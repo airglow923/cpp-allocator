@@ -25,11 +25,7 @@ set(INCLUDE_FILES
 
 set(SOURCE_FILES
     hyundeok/allocator/allocator_utils.cc
-    hyundeok/allocator/sequential/sequential_allocate.cc
-    hyundeok/allocator/linked_list/fit_search.cc
-    hyundeok/allocator/linked_list/first_fit_search.cc
-    hyundeok/allocator/linked_list/next_fit_search.cc
-    hyundeok/allocator/linked_list/best_fit_search.cc)
+    hyundeok/allocator/sequential/sequential_allocate.cc)
 
 # file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 
