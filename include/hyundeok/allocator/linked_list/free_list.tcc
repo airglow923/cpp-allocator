@@ -73,8 +73,7 @@ HYUNDEOK_FREELIST_SIG_([[nodiscard]] auto)::cend() const noexcept
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-HYUNDEOK_FREELIST_SIG_([[nodiscard]] auto)::InsertAfter(const_iterator pos,
-                                                        Node_ heap)
+HYUNDEOK_FREELIST_SIG_(auto)::InsertAfter(const_iterator pos, Node_ heap)
     -> iterator {
   if (pos == end())
     return end();
@@ -86,13 +85,17 @@ HYUNDEOK_FREELIST_SIG_([[nodiscard]] auto)::InsertAfter(const_iterator pos,
 }
 
 HYUNDEOK_FREELIST_SIG_(auto)::InsertFront(Node_ heap) -> iterator {
-  auto node = InsertAfter(CBeforeBegin(), heap);
-  return CoalesceNeighbor(begin(), node);
+  auto beg = InsertAfter(CBeforeBegin(), heap);
+  if (beg->next_ != nullptr) {
+    beg = CoalesceNeighbor(++begin(), beg);
+    root_.next_ = const_cast<Node_>(beg.node_);
+  }
+  return begin();
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 HYUNDEOK_FREELIST_SIG_(auto)::EraseAfter(const_iterator pos) -> iterator {
-  if (pos <=> end() == nullptr)
+  if (pos == end())
     return end();
 
   iterator cur{const_cast<Node_>(pos.node_)};
@@ -112,7 +115,7 @@ HYUNDEOK_FREELIST_SIG_([[nodiscard]] auto)::Empty() const -> bool {
 }
 
 HYUNDEOK_FREELIST_SIG_(auto)::CoalesceNode(Node_ lhs, Node_ rhs) -> Node_ {
-  lhs->next_ = rhs->next_;
+  lhs->next_ = lhs < rhs ? nullptr : rhs->next_;
   lhs->size_ += AllocateSize(rhs->size_);
   return lhs;
 }
@@ -126,21 +129,22 @@ HYUNDEOK_FREELIST_SIG_([[nodiscard]] auto)::CoalesceNeighbor(
 
   assert(iter != nullptr && cur != nullptr);
 
-  for (; iter->next_ != cur; iter = iter->next_)
-    continue;
+  if (iter->next_ != nullptr) {
+    for (; iter->next_ != cur; iter = iter->next_)
+      continue;
+  }
 
-  // when the previous heap is physically prior to node
+  // when the iter is physically prior to the current node
   if (GetHeapEnd(iter) == cur) {
-    // combine node with previous heap
+    // combine iter with previous heap
     previous = CoalesceNode(iter, cur);
   }
 
-  // when neighbor is next to node
-  // when the next heap is physically next to node
-  if (GetHeapEnd(cur) == cur->next_) {
+  // when the next heap is physically next to the current node
+  if (cur->next_ != nullptr && GetHeapEnd(cur) == cur->next_) {
     // combine node with next heap
     if (previous != nullptr)
-      previous = CoalesceNode(cur, cur->next_);
+      previous = CoalesceNode(previous, previous->next_);
     else
       CoalesceNode(cur, cur->next_);
   }

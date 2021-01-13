@@ -59,6 +59,8 @@ public:
 
   [[nodiscard]] auto Empty() const -> bool;
 
+  auto InsertAfter(const_iterator pos, Node_ heap) -> iterator;
+
   auto InsertFront(Node_ heap) -> iterator;
 
   auto ReleaseNode(SizeT size) -> iterator;
@@ -71,8 +73,6 @@ private:
 
   [[nodiscard]] static auto SplitHeap(const_iterator node, SizeT size)
       -> iterator;
-
-  auto InsertAfter(const_iterator pos, Node_ heap) -> iterator;
 
   auto EraseAfter(const_iterator pos) -> iterator;
 
