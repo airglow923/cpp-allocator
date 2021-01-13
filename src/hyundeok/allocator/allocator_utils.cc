@@ -23,7 +23,7 @@ auto ConvertPtrToHeapHeader(void* ptr) -> HeapHeader* {
   return static_cast<HeapHeader*>(ptr);
 }
 
-auto FindMatchHeap(HeapHeader* heap, SizeT size) -> bool {
+auto FindMatchHeap::operator()(HeapHeader* heap, SizeT size) -> bool {
   return !heap->used_ && heap->size_ >= size;
 }
 
