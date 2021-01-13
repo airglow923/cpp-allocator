@@ -139,16 +139,17 @@ TEST(TestGetHeapHeader, GetHeapHeader) {
 TEST(TestFindMatchHeap, FindMatchHeap) {
   auto* heap1 = RequestHeap(10);
   auto* heap2 = RequestHeap(16);
+  auto match = FindMatchHeap();
 
   heap2->used_ = true;
 
-  EXPECT_TRUE(FindMatchHeap(heap1, 9));
-  EXPECT_TRUE(FindMatchHeap(heap1, 10));
-  EXPECT_FALSE(FindMatchHeap(heap1, 11));
+  EXPECT_TRUE(match(heap1, 9));
+  EXPECT_TRUE(match(heap1, 10));
+  EXPECT_FALSE(match(heap1, 11));
 
-  EXPECT_FALSE(FindMatchHeap(heap2, 15));
-  EXPECT_FALSE(FindMatchHeap(heap2, 16));
-  EXPECT_FALSE(FindMatchHeap(heap2, 17));
+  EXPECT_FALSE(match(heap2, 15));
+  EXPECT_FALSE(match(heap2, 16));
+  EXPECT_FALSE(match(heap2, 17));
 }
 
 TEST(TestInitializeHeapHeader, InitializeHeap) {
