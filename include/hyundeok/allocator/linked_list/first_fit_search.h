@@ -3,12 +3,15 @@
 
 #include "hyundeok/allocator/concepts.h"
 #include "hyundeok/allocator/allocator_types.h"
+#include "hyundeok/allocator/linked_list/fit_search.h"
 
 namespace hyundeok::allocator::linked_list {
 
 struct FirstFitSearch {
   auto operator()(HeapHeader* begin, SizeT size, HeapComparePolicy auto compare)
-      -> HeapHeader*;
+      -> HeapHeader* {
+    return FitSearch(begin, size, compare);
+  }
 };
 
 } // namespace hyundeok::allocator::linked_list

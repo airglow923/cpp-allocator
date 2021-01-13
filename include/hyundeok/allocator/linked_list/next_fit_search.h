@@ -8,7 +8,20 @@ namespace hyundeok::allocator::linked_list {
 
 struct NextFitSearch {
   auto operator()(HeapHeader* begin, SizeT size, HeapComparePolicy auto compare)
-      -> HeapHeader*;
+      -> HeapHeader* {
+    if (cur_ == nullptr)
+      cur_ = begin;
+
+    auto* fit = FitSearch(cur_, size, compare);
+
+    if (fit != nullptr)
+      cur_ = fit;
+    else
+      cur_ = begin;
+
+    return fit;
+  }
+
   HeapHeader* cur_ = nullptr;
 };
 

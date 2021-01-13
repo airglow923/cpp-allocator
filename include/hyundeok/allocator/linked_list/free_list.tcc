@@ -76,7 +76,7 @@ HYUNDEOK_FREELIST_SIG_([[nodiscard]] auto)::cend() const noexcept
 HYUNDEOK_FREELIST_SIG_([[nodiscard]] auto)::InsertAfter(const_iterator pos,
                                                         Node_ heap)
     -> iterator {
-  if (pos <=> end() == nullptr)
+  if (pos == end())
     return end();
 
   iterator cur{const_cast<Node_>(pos.node_)};

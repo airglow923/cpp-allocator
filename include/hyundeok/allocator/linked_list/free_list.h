@@ -9,7 +9,7 @@
 
 namespace hyundeok::allocator::linked_list {
 
-template <HeapComparePolicy Compare = decltype(&FindMatchHeap),
+template <HeapComparePolicy Compare = FindMatchHeap,
           HeapSearchPolicy<Compare> Search = FirstFitSearch>
 class FreeList {
   // NOLINTNEXTLINE(readability-identifier-naming)
