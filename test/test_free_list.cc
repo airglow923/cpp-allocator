@@ -2,37 +2,40 @@
 
 #include "hyundeok/allocator/allocator_utils.h"
 #include "hyundeok/allocator/linked_list/free_list.h"
+#include "hyundeok/allocator/linked_list/first_fit_search.h"
 
 #include <utility>
 
 using namespace hyundeok::allocator;
 using namespace hyundeok::allocator::linked_list;
 
+using DefaultFreeList = FreeList<FirstFitSearch<FindMatchHeap>>;
+
 namespace {
 
 TEST(TestFreeListConstructor, DefaultConstruction) {
-  FreeList fl;
+  DefaultFreeList fl;
   EXPECT_EQ(fl.begin(), fl.end());
 }
 
-// TEST(TestFreeListConstructor, CopyConstructor) {
-//   FreeList fl1;
-//   EXPECT_DEATH(FreeList{fl1}, "");
+// TEST(TestDefaultFreeListConstructor, CopyConstructor) {
+//   DefaultFreeList fl1;
+//   EXPECT_DEATH(DefaultFreeList{fl1}, "");
 // }
 
-TEST(TestFreeListConstructor, MoveConstructor) {
-  FreeList fl1;
+TEST(TestDefaultFreeListConstructor, MoveConstructor) {
+  DefaultFreeList fl1;
   auto* node = RequestHeap(10);
   fl1.InsertFront(node);
 
-  FreeList fl2{std::move(fl1)};
+  DefaultFreeList fl2{std::move(fl1)};
   EXPECT_EQ(fl1.begin(), fl1.end());
   EXPECT_NE(fl2.begin(), fl2.end());
   EXPECT_EQ(fl2.begin().node_, node);
 }
 
-TEST(TestFreeListInsertAfter, InsertAfter) {
-  FreeList fl;
+TEST(TestDefaultFreeListInsertAfter, InsertAfter) {
+  DefaultFreeList fl;
   auto* node = RequestHeap(10);
 
   fl.InsertAfter(fl.CBeforeBegin(), node);
@@ -45,8 +48,8 @@ TEST(TestFreeListInsertAfter, InsertAfter) {
   EXPECT_EQ(++beg, fl.end());
 }
 
-TEST(TestFreeListInsertAfter, InsertAfterMultiple) {
-  FreeList fl;
+TEST(TestDefaultFreeListInsertAfter, InsertAfterMultiple) {
+  DefaultFreeList fl;
 
   auto bbeg = fl.CBeforeBegin();
   EXPECT_EQ(fl.begin(), fl.end());
@@ -77,8 +80,8 @@ TEST(TestFreeListInsertAfter, InsertAfterMultiple) {
   EXPECT_NE(bbeg->next_->next_, nullptr);
 }
 
-TEST(TestFreeListInsertFront, Coalesce) {
-  FreeList fl;
+TEST(TestDefaultFreeListInsertFront, Coalesce) {
+  DefaultFreeList fl;
 
   auto bbeg = fl.CBeforeBegin();
   auto heap1 = RequestHeap(64);
@@ -103,8 +106,8 @@ TEST(TestFreeListInsertFront, Coalesce) {
   EXPECT_EQ(bbeg->next_->next_, nullptr);
 }
 
-TEST(TestFreeListReleaseNode, ReleaseNode) {
-  FreeList fl;
+TEST(TestDefaultFreeListReleaseNode, ReleaseNode) {
+  DefaultFreeList fl;
 
   auto bbeg = fl.CBeforeBegin();
   fl.InsertAfter(bbeg, RequestHeap(64));

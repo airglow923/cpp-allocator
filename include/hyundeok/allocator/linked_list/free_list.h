@@ -5,12 +5,10 @@
 #include "hyundeok/allocator/allocator_types.h"
 #include "hyundeok/allocator/allocator_utils.h"
 #include "hyundeok/allocator/linked_list/free_list_iterator.h"
-#include "hyundeok/allocator/linked_list/first_fit_search.h"
 
 namespace hyundeok::allocator::linked_list {
 
-template <HeapComparePolicy Compare = FindMatchHeap,
-          HeapSearchPolicy<Compare> Search = FirstFitSearch>
+template <HeapSearchPolicy Search>
 class FreeList {
   // NOLINTNEXTLINE(readability-identifier-naming)
   using Self_ = FreeList;
@@ -25,11 +23,13 @@ public:
 
   FreeList();
 
-  FreeList(const FreeList&) = delete;
+  FreeList(const Self_&) = delete;
 
-  FreeList(FreeList&& other);
+  FreeList(Self_&& other);
 
-  auto operator=(const FreeList&) -> FreeList& = delete;
+  auto operator=(const Self_&) -> Self_& = delete;
+
+  auto operator=(Self_&&) -> Self_& = delete;
 
   ~FreeList();
 
@@ -69,7 +69,8 @@ private:
   static auto CoalesceNode(Node_ lhs, Node_ rhs) -> Node_;
 
   [[nodiscard]] static auto CoalesceNeighbor(const_iterator head,
-                                             const_iterator current) -> iterator;
+                                             const_iterator current)
+      -> iterator;
 
   [[nodiscard]] static auto SplitHeap(const_iterator node, SizeT size)
       -> iterator;
@@ -77,8 +78,7 @@ private:
   auto EraseAfter(const_iterator pos) -> iterator;
 
   HeapHeader root_;
-  Compare compare_;
-  Search search_;
+  Search search_ = Search();
 };
 
 } // namespace hyundeok::allocator::linked_list
