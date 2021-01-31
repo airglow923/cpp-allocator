@@ -5,19 +5,23 @@
 
 namespace hyundeok::allocator::linked_list {
 
-struct BestFitSearch {
-  auto operator()(HeapHeader* begin, SizeT size, HeapComparePolicy auto compare)
-      -> HeapHeader* {
+template <HeapComparePolicy Compare>
+class BestFitSearch {
+public:
+  auto operator()(HeapHeader* begin, SizeT size) -> HeapHeader* {
     HeapHeader* best = nullptr;
 
     for (; begin != nullptr; begin = begin->next_) {
-      if (compare(begin, size) &&
+      if (compare_(begin, size) &&
           (best == nullptr || begin->size_ < best->size_))
         best = begin;
     }
 
     return best;
   }
+
+private:
+  Compare compare_ = Compare();
 };
 
 } // namespace hyundeok::allocator::linked_list

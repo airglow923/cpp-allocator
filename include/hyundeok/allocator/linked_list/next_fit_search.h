@@ -6,13 +6,14 @@
 
 namespace hyundeok::allocator::linked_list {
 
-struct NextFitSearch {
-  auto operator()(HeapHeader* begin, SizeT size, HeapComparePolicy auto compare)
-      -> HeapHeader* {
+template <HeapComparePolicy Compare>
+class NextFitSearch {
+public:
+  auto operator()(HeapHeader* begin, SizeT size) -> HeapHeader* {
     if (cur_ == nullptr)
       cur_ = begin;
 
-    auto* fit = FitSearch(cur_, size, compare);
+    auto* fit = FitSearch(cur_, size, compare_);
 
     if (fit != nullptr)
       cur_ = fit;
@@ -22,7 +23,9 @@ struct NextFitSearch {
     return fit;
   }
 
+private:
   HeapHeader* cur_ = nullptr;
+  Compare compare_ = Compare();
 };
 
 } // namespace hyundeok::allocator::linked_list
