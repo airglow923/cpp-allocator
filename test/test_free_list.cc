@@ -13,6 +13,10 @@ using DefaultFreeList = FreeList<FirstFitSearch<FindMatchHeap>>;
 
 namespace {
 
+void InitializeHeapHeader(HeapHeader& heap) {
+  heap = {.size_ = 0, .next_ = nullptr, .used_ = false, .data_ = {0}};
+}
+
 TEST(TestFreeListConstructor, DefaultConstruction) {
   DefaultFreeList fl;
   EXPECT_EQ(fl.begin(), fl.end());
@@ -22,18 +26,6 @@ TEST(TestFreeListConstructor, DefaultConstruction) {
 //   DefaultFreeList fl1;
 //   EXPECT_DEATH(DefaultFreeList{fl1}, "");
 // }
-
-TEST(TestDefaultFreeListConstructor, MoveConstructor) {
-  DefaultFreeList fl1;
-  auto* node = RequestHeap(10);
-  fl1.InsertFront(node);
-
-  DefaultFreeList fl2{std::move(fl1)};
-
-  EXPECT_EQ(fl1.begin(), fl1.end());
-  EXPECT_NE(fl2.begin(), fl2.end());
-  EXPECT_EQ(fl2.begin().node_, node);
-}
 
 TEST(TestDefaultFreeListInsertAfter, InsertAfter) {
   DefaultFreeList fl;
@@ -53,7 +45,8 @@ TEST(TestDefaultFreeListInsertAfter, InsertAfter) {
 TEST(TestDefaultFreeListInsertAfter, InsertAfterMultiple) {
   DefaultFreeList fl;
 
-  auto bbeg = fl.CBeforeBegin();
+  auto bbeg = fl.BeforeBegin();
+  InitializeHeapHeader(*bbeg.node_);
   EXPECT_EQ(fl.begin(), fl.end());
 
   auto* heap1 = RequestHeap(64);
@@ -85,7 +78,8 @@ TEST(TestDefaultFreeListInsertAfter, InsertAfterMultiple) {
 TEST(TestDefaultFreeListInsertFront, Coalesce) {
   DefaultFreeList fl;
 
-  auto bbeg = fl.CBeforeBegin();
+  auto bbeg = fl.BeforeBegin();
+  InitializeHeapHeader(*bbeg.node_);
 
   auto heap1 = RequestHeap(64);
   auto heap2 = RequestHeap(128);
@@ -115,7 +109,8 @@ TEST(TestDefaultFreeListInsertFront, Coalesce) {
 TEST(TestDefaultFreeListReleaseNode, ReleaseNode) {
   DefaultFreeList fl;
 
-  auto bbeg = fl.CBeforeBegin();
+  auto bbeg = fl.BeforeBegin();
+  InitializeHeapHeader(*bbeg.node_);
 
   fl.InsertAfter(bbeg, RequestHeap(64));
   fl.InsertAfter(bbeg, RequestHeap(128));
