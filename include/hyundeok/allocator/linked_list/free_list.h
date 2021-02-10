@@ -21,17 +21,9 @@ public:
   // NOLINTNEXTLINE(readability-identifier-naming)
   using const_iterator = FreeListIterator<true>;
 
-  FreeList();
+  FreeList() = default;
 
-  FreeList(const Self_&) = delete;
-
-  FreeList(Self_&& other);
-
-  auto operator=(const Self_&) -> Self_& = delete;
-
-  auto operator=(Self_&&) -> Self_& = delete;
-
-  ~FreeList();
+  ~FreeList() = default;
 
   [[nodiscard]] auto BeforeBegin() noexcept -> iterator;
 
@@ -77,7 +69,6 @@ private:
 
   auto EraseAfter(const_iterator pos) -> iterator;
 
-  HeapHeader root_;
   Search search_ = Search();
 };
 

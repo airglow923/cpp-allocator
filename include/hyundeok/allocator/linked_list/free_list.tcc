@@ -5,6 +5,8 @@
 #include "hyundeok/allocator/linked_list/free_list.h"
 #endif
 
+#include <unistd.h>
+
 #include <cassert>
 
 #define HYUNDEOK_FREELIST_SIG(R)                                               \
@@ -13,44 +15,54 @@
 
 namespace hyundeok::allocator::linked_list {
 
-HYUNDEOK_FREELIST_SIG()::FreeList()
-    : root_{.size_ = 0, .next_ = nullptr, .used_ = false, .data_ = {0}} {}
+namespace {
 
-HYUNDEOK_FREELIST_SIG()::FreeList(Self_&& other)
-    : root_{std::move(other.root_)}, search_{std::move(other.search_)} {
-  other.root_.next_ = nullptr;
-}
+struct FreeListRootWrapper {
+  FreeListRootWrapper() noexcept
+      : root_{.size_ = 0, .next_ = nullptr, .used_ = false, .data_ = {0}} {}
+  ~FreeListRootWrapper() noexcept {
+    SizeT total_size = 0;
 
-// NOLINTNEXTLINE(modernize-use-equals-default)
-HYUNDEOK_FREELIST_SIG()::~FreeList() {}
+    for (auto* node = root_.next_; node != nullptr; node = node->next_)
+      total_size += AllocateSize(node->size_);
+
+    brk(ConvertPtrToCharPtr(GetHeapStart()) + total_size);
+  }
+
+  HeapHeader root_;
+};
+
+FreeListRootWrapper kRoot;
+
+} // namespace
 
 HYUNDEOK_FREELIST_SIG([[nodiscard]] auto)::BeforeBegin() noexcept -> iterator {
-  return iterator{&root_};
+  return iterator{&kRoot.root_};
 }
 
 HYUNDEOK_FREELIST_SIG([[nodiscard]] auto)::BeforeBegin() const noexcept
     -> const_iterator {
-  return const_iterator{&root_};
+  return const_iterator{&kRoot.root_};
 }
 
 HYUNDEOK_FREELIST_SIG([[nodiscard]] auto)::CBeforeBegin() const noexcept
     -> const_iterator {
-  return const_iterator{&root_};
+  return const_iterator{&kRoot.root_};
 }
 
 // NOLINTNEXTLINE(readability-make-member-function-const)
 HYUNDEOK_FREELIST_SIG([[nodiscard]] auto)::begin() noexcept -> iterator {
-  return iterator{root_.next_};
+  return iterator{kRoot.root_.next_};
 }
 
 HYUNDEOK_FREELIST_SIG([[nodiscard]] auto)::begin() const noexcept
     -> const_iterator {
-  return const_iterator{root_.next_};
+  return const_iterator{kRoot.root_.next_};
 }
 
 HYUNDEOK_FREELIST_SIG([[nodiscard]] auto)::cbegin() const noexcept
     -> const_iterator {
-  return const_iterator{root_.next_};
+  return const_iterator{kRoot.root_.next_};
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
@@ -86,7 +98,7 @@ HYUNDEOK_FREELIST_SIG(auto)::InsertFront(Node_ heap) -> iterator {
   auto beg = InsertAfter(CBeforeBegin(), heap);
   if (beg->next_ != nullptr) {
     beg = CoalesceNeighbor(++begin(), beg);
-    root_.next_ = const_cast<Node_>(beg.node_);
+    kRoot.root_.next_ = const_cast<Node_>(beg.node_);
   }
   return begin();
 }
@@ -109,7 +121,7 @@ HYUNDEOK_FREELIST_SIG(auto)::ReleaseNode(SizeT size) -> iterator {
 }
 
 HYUNDEOK_FREELIST_SIG([[nodiscard]] auto)::Empty() const -> bool {
-  return root_.next_ == nullptr;
+  return kRoot.root_.next_ == nullptr;
 }
 
 HYUNDEOK_FREELIST_SIG(auto)::CoalesceNode(Node_ lhs, Node_ rhs) -> Node_ {
