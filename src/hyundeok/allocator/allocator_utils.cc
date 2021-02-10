@@ -14,9 +14,25 @@ auto AllocateSize(SizeT size) -> SizeT {
   return size + sizeof(HeapHeader) - ComputeDataAlignment();
 }
 
+/**
+ * This is because of how the data members of HeapHeader are ordered.
+ *
+ * used_ in HeapHeader occupies sizeof(bool) byte followed by actual data
+ * portion of a heap chunk.
+ *
+ * Why not simply 1 instead of sizeof(bool)?
+ *
+ * The size of bool is implementation-defined although many compilers define
+ * it as 1.
+ */
 auto ComputeDataAlignment() -> SizeT { return sizeof(WordT) - sizeof(bool); }
 
-// for 1-byte arithmeitc operations on pointer
+/**
+ * This is for 1-byte arithmeitc operations on pointer
+ *
+ * static_cast<char*> alone cannot do its job because this function is intended
+ * to operate on any pointer by converting a pointer to void pointer at first.
+ */
 auto ConvertPtrToCharPtr(void* ptr) -> char* { return static_cast<char*>(ptr); }
 
 auto ConvertPtrToHeapHeader(void* ptr) -> HeapHeader* {
@@ -48,8 +64,8 @@ auto GetHeapStart() -> void* {
 }
 
 auto GetHeapStartHeader() -> HeapHeader*& {
-  static auto* start = GetSentinelNode();
-  return start;
+  static auto* kStart = GetSentinelNode();
+  return kStart;
 }
 
 /**
@@ -61,9 +77,9 @@ auto GetHeapEnd(HeapHeader* heap) -> HeapHeader* {
 }
 
 auto GetSentinelNode() -> HeapHeader* {
-  static HeapHeader sentinel{
-      .size_ = 0, .next_ = &sentinel, .used_ = false, .data_ = {0}};
-  return &sentinel;
+  static HeapHeader kSentinel{
+      .size_ = 0, .next_ = &kSentinel, .used_ = false, .data_ = {0}};
+  return &kSentinel;
 }
 
 auto RequestHeap(SizeT size) -> HeapHeader* {
