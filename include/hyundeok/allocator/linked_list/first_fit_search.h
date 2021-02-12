@@ -3,20 +3,25 @@
 
 #include "hyundeok/allocator/concepts.h"
 #include "hyundeok/allocator/allocator_types.h"
-#include "hyundeok/allocator/linked_list/fit_search.h"
+#include "hyundeok/allocator/linked_list/default_heap_compare_policy.h"
 
 namespace hyundeok::allocator::linked_list {
 
-template <HeapComparePolicy Compare>
-class FirstFitSearch {
-public:
-  auto operator()(HeapHeader* begin, SizeT size) -> HeapHeader* {
-    return FitSearch(begin, size, compare_);
+[[nodiscard]] auto FirstFitSearch(HeapHeader* begin, HeapHeader* end,
+                                  SizeT size, HeapComparePolicy auto compare)
+    -> HeapHeader* {
+  for (; begin != end; begin = begin->next_) {
+    if (compare(begin, size))
+      return begin;
   }
 
-private:
-  Compare compare_ = Compare();
-};
+  return end;
+}
+
+[[nodiscard]] inline auto FirstFitSearch(HeapHeader* begin, HeapHeader* end,
+                                         SizeT size) -> HeapHeader* {
+  return FirstFitSearch(begin, end, size, DefaultHeapComparePolicy);
+}
 
 } // namespace hyundeok::allocator::linked_list
 
