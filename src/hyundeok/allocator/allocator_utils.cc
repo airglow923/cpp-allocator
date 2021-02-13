@@ -43,8 +43,8 @@ auto InitializeHeapHeader(HeapHeader* heap, SizeT size) -> HeapHeader* {
   assert(heap != nullptr);
 
   heap->size_ = size;
+  heap->next_ = nullptr;
   heap->used_ = false;
-  heap->next_ = GetSentinelNode();
 
   return heap;
 }
@@ -60,7 +60,7 @@ auto GetHeapStart() -> void* {
 }
 
 auto GetHeapStartHeader() -> HeapHeader*& {
-  static auto* kStart = GetSentinelNode();
+  static auto* kStart = static_cast<HeapHeader*>(GetHeapStart());
   return kStart;
 }
 
@@ -70,12 +70,6 @@ auto GetHeapStartHeader() -> HeapHeader*& {
 auto GetHeapEnd(HeapHeader* heap) -> HeapHeader* {
   return ConvertPtrToHeapHeader(ConvertPtrToCharPtr(heap) +
                                 AllocateSize(heap->size_));
-}
-
-auto GetSentinelNode() -> HeapHeader* {
-  static HeapHeader kSentinel{
-      .size_ = 0, .next_ = &kSentinel, .used_ = false, .data_ = {0}};
-  return &kSentinel;
 }
 
 auto RequestHeap(SizeT size) -> HeapHeader* {

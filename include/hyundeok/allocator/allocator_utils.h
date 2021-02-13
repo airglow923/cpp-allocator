@@ -15,7 +15,6 @@ auto GetHeapHeader(void* heap) -> HeapHeader*;
 auto GetHeapStart() -> void*;
 auto GetHeapStartHeader() -> HeapHeader*&;
 auto GetHeapEnd(HeapHeader* heap) -> HeapHeader*;
-auto GetSentinelNode() -> HeapHeader*;
 auto RequestHeap(SizeT size) -> HeapHeader*;
 
 } // namespace hyundeok::allocator
