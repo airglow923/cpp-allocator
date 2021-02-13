@@ -17,10 +17,10 @@ auto SequentialAllocate(SizeT size) -> void* {
 
   heap->size_ = size;
   heap->used_ = true;
-  heap->next_ = GetSentinelNode();
+  heap->next_ = nullptr;
   data = heap->next_;
 
-  if (start == GetSentinelNode()) {
+  if (start == nullptr) {
     start = heap;
   } else {
     start->next_ = heap;
