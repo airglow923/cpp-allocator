@@ -13,7 +13,8 @@ BestFitSearch(HeapHeader* begin, HeapHeader* end, SizeT size,
   HeapHeader* best = end;
 
   for (; begin != end; begin = begin->next_) {
-    if (begin->size_ < best->size_ && compare(begin, size))
+    if ((begin->size_ < best->size_ || best->size_ == 0) &&
+        compare(begin, size))
       best = begin;
   }
 
