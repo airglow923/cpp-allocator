@@ -1,55 +1,24 @@
-#ifndef HYUNDEOK_ALLOCATOR_LINKED_LIST_FREE_LIST_ITERATOR_TCC
-#define HYUNDEOK_ALLOCATOR_LINKED_LIST_FREE_LIST_ITERATOR_TCC
+#include "hyundeok/allocator/list_allocate.h"
 
-#ifndef HYUNDEOK_ALLOCATOR_LINKED_LIST_FREE_LIST_ITERATOR_H
-#include "hyundeok/allocator/linked_list/free_list_iterator.h"
-#endif
+#include "hyundeok/allocator/allocator_utils.h"
+#include "hyundeok/allocator/linked_list/free_list.h"
 
-namespace hyundeok::allocator::linked_list {
+namespace hyundeok::allocator {
 
-template <bool constness>
-FreeListIterator<constness>::FreeListIterator() noexcept : node_{} {}
+auto ListAllocate(SizeT n) -> void* {
+  auto* match = linked_list::ReleaseNode(n);
 
-template <bool constness>
-FreeListIterator<constness>::FreeListIterator(
-    const FreeListIterator<>& other) noexcept
-    : node_{other.node_} {}
+  if (match != nullptr)
+    return match;
 
-template <bool constness>
-FreeListIterator<constness>::FreeListIterator(Node_ node) noexcept
-    : node_{node} {}
-
-template <bool constness>
-auto FreeListIterator<constness>::operator*() const noexcept -> reference {
-  return *node_;
+  return RequestHeap(n);
 }
 
-template <bool constness>
-auto FreeListIterator<constness>::operator->() const noexcept -> pointer {
-  return node_;
+auto ListDeallocate(HeapHeader* heap) -> void {
+  if (heap == nullptr)
+    return;
+
+  linked_list::InsertFront(heap);
 }
 
-template <bool constness>
-auto FreeListIterator<constness>::operator++() noexcept -> Self_& {
-  node_ = node_->next_;
-  return *this;
-}
-
-template <bool constness>
-auto FreeListIterator<constness>::operator++(int) noexcept -> Self_ {
-  Self_ tmp{*this};
-  node_ = node_->next_;
-  return tmp;
-}
-
-HYUNDEOK_LISTALLOCATOR_SIG(auto)::allocate(size_type n) -> pointer {
-  auto* heap = RequestHeap(n);
-  freelist_.InsertFront(heap);
-  return static_cast<T>(heap);
-}
-
-HYUNDEOK_LISTALLOCATOR_SIG(auto)::deallocate(pointer p, size_type n) -> void {}
-
-} // namespace hyundeok::allocator::linked_list
-
-#endif
+} // namespace hyundeok::allocator

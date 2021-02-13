@@ -7,6 +7,8 @@ namespace hyundeok::allocator {
 
 auto ListAllocate(SizeT n) -> void*;
 
+auto ListDeallocate(HeapHeader* heap) -> void;
+
 }
 
 #endif
