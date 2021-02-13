@@ -13,8 +13,6 @@ set(INCLUDE_FILES
     ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/allocator_types.h
     ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/allocator_utils.h
     ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/concepts.h
-    ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/linked_list/free_list.h
-    ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/linked_list/free_list_iterator.h
     ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/linked_list/fit_search.h
     ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/linked_list/first_fit_search.h
     ${PROJECT_INCLUDE_DIR}/hyundeok/allocator/linked_list/next_fit_search.h
@@ -25,7 +23,8 @@ set(INCLUDE_FILES
 
 set(SOURCE_FILES
     hyundeok/allocator/allocator_utils.cc
-    hyundeok/allocator/sequential/sequential_allocate.cc)
+    hyundeok/allocator/sequential/sequential_allocate.cc
+    hyundeok/allocator/linked_list/free_list.cc)
 
 # file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 
