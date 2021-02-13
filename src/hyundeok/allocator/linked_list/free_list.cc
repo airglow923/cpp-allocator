@@ -1,9 +1,9 @@
 #include "hyundeok/allocator/linked_list/free_list.h"
+
+#include "hyundeok/allocator/allocator_utils.h"
 #include "hyundeok/allocator/linked_list/best_fit_search.h"
 
 #include <unistd.h>
-
-#include <cassert>
 
 namespace hyundeok::allocator::linked_list {
 
@@ -12,18 +12,16 @@ namespace {
 struct FreeListRootWrapper {
   FreeListRootWrapper() noexcept
       : root_{.size_ = 0, .next_ = &root_, .used_ = false, .data_ = {0}} {}
-  ~FreeListRootWrapper() noexcept {
-    SizeT total_size = 0;
-
-    for (auto* node = root_.next_; node != nullptr; node = node->next_)
-      total_size += AllocateSize(node->size_);
-
-    brk(ConvertPtrToCharPtr(GetHeapStart()) + total_size);
-  }
+  ~FreeListRootWrapper() noexcept { ClearFreeList(); }
 
   HeapHeader root_;
 };
 
+// I don't understand why a variable inside anonymous namespace is not
+// considered as a static variable. Even if I move it ouside the namespace and
+// declare it as static, the linter still raises an error. Is this a bug?
+//
+// NOLINTNEXTLINE(readability-identifier-naming)
 FreeListRootWrapper kRoot;
 
 auto GetFreeListBeforeBegin() -> HeapHeader* { return &kRoot.root_; }
@@ -35,20 +33,77 @@ auto GetFreeListBegin() -> HeapHeader* {
 } // namespace
 
 auto InsertAfter(HeapHeader* pos, HeapHeader* heap) -> HeapHeader* {
-  assert(pos != nullptr);
-
   heap->next_ = pos->next_;
   pos->next_ = heap;
+
+  if (heap->next_ != GetFreeListBeforeBegin()) {
+    heap = CoalesceNode(heap->next_, heap);
+    pos->next_ = heap;
+  }
+
   return heap;
 }
 
 auto InsertFront(HeapHeader* heap) -> HeapHeader* {
-  auto* beg = InsertAfter(GetFreeListBeforeBegin(), heap);
-  if (beg->next_ != GetFreeListBeforeBegin()) {
-    beg = CoalesceNeighbor(GetFreeListBegin()->next_, beg);
-    kRoot.root_.next_ = beg;
+  return InsertAfter(GetFreeListBeforeBegin(), heap);
+}
+
+auto ReleaseNode(SizeT size) -> HeapHeader* {
+  auto* match =
+      BestFitSearch(GetFreeListBegin(), GetFreeListBeforeBegin(), size);
+  if (match == GetFreeListBeforeBegin())
+    return nullptr;
+  return SplitHeap(match, size);
+}
+
+auto CoalesceNode(HeapHeader* lhs, HeapHeader* rhs) -> HeapHeader* {
+  lhs->next_ = lhs < rhs ? GetFreeListBeforeBegin() : rhs->next_;
+  lhs->size_ += AllocateSize(rhs->size_);
+  return lhs;
+}
+
+[[nodiscard]] auto CoalesceNeighbor(HeapHeader* head, HeapHeader* cur)
+    -> HeapHeader* {
+  // when neighbor is prior to node
+  HeapHeader* previous = nullptr;
+
+  if (head->next_ != nullptr) {
+    for (; head->next_ != cur; head = head->next_)
+      continue;
   }
-  return GetFreeListBegin();
+
+  // when the head is physically prior to the current node
+  if (GetHeapEnd(head) == cur) {
+    // combine head with previous heap
+    previous = CoalesceNode(head, cur);
+  }
+
+  // when the next heap is physically next to the current node
+  if (cur->next_ != GetFreeListBeforeBegin() && GetHeapEnd(cur) == cur->next_) {
+    // combine node with next heap
+    if (previous != nullptr)
+      previous = CoalesceNode(previous, previous->next_);
+    else
+      CoalesceNode(cur, cur->next_);
+  }
+
+  return previous != GetFreeListBeforeBegin() ? previous : cur;
+}
+
+[[nodiscard]] auto SplitHeap(HeapHeader* node, SizeT size) -> HeapHeader* {
+  const auto requested = AllocateSize(size);
+
+  if (node->size_ < requested)
+    return GetFreeListBeforeBegin();
+
+  auto* new_heap =
+      ConvertPtrToHeapHeader(ConvertPtrToCharPtr(GetHeapEnd(node)) - requested);
+
+  node->size_ -= requested;
+  InitializeHeapHeader(new_heap, size);
+  new_heap->next_ = node->next_;
+
+  return new_heap;
 }
 
 auto EraseAfter(HeapHeader* pos) -> HeapHeader* {
@@ -57,70 +112,19 @@ auto EraseAfter(HeapHeader* pos) -> HeapHeader* {
   return tmp;
 }
 
-auto ReleaseNode(SizeT size) -> HeapHeader* {
-  auto* match = BestFitSearch(GetFreeListBegin(), size);
-  return SplitHeap(match, size);
-}
+auto ClearFreeList() -> void {
+  SizeT total_size = 0;
+  auto* node = GetFreeListBegin();
 
-[[nodiscard]] auto Empty() const -> bool {
-  return kRoot.root_.next_ == nullptr;
-}
+  // get total size of allocated heap
+  total_size += AllocateSize(node->size_);
+  for (; node != GetFreeListBeforeBegin(); node = node->next_)
+    total_size += AllocateSize(node->size_);
 
-auto CoalesceNode(HeapHeader* lhs, HeapHeader* rhs) -> HeapHeader* {
-  lhs->next_ = lhs < rhs ? nullptr : rhs->next_;
-  lhs->size_ += AllocateSize(rhs->size_);
-  return lhs;
-}
+  // move heap pointer to the position before heap allocation
+  brk(ConvertPtrToCharPtr(node) - total_size);
 
-[[nodiscard]] auto CoalesceNeighbor(HeapHeader* head, HeapHeader* current)
-    -> HeapHeader* {
-  // when neighbor is prior to node
-  auto* iter = const_cast<HeapHeader*>(head.node_);
-  auto* cur = const_cast<HeapHeader*>(current.node_);
-  HeapHeader* previous = nullptr;
-
-  assert(iter != nullptr && cur != nullptr);
-
-  if (iter->next_ != nullptr) {
-    for (; iter->next_ != cur; iter = iter->next_)
-      continue;
-  }
-
-  // when the iter is physically prior to the current node
-  if (GetHeapEnd(iter) == cur) {
-    // combine iter with previous heap
-    previous = CoalesceNode(iter, cur);
-  }
-
-  // when the next heap is physically next to the current node
-  if (cur->next_ != nullptr && GetHeapEnd(cur) == cur->next_) {
-    // combine node with next heap
-    if (previous != nullptr)
-      previous = CoalesceNode(previous, previous->next_);
-    else
-      CoalesceNode(cur, cur->next_);
-  }
-
-  return previous != nullptr ? HeapHeader * {previous} : HeapHeader * {cur};
-}
-
-[[nodiscard]] auto SplitHeap(HeapHeader* node, SizeT size) -> HeapHeader* {
-  auto* raw_node = const_cast<HeapHeader*>(node.node_);
-  const auto requested = AllocateSize(size);
-
-  if (node->size_ < requested)
-    return HeapHeader * {nullptr};
-
-  auto* new_heap = ConvertPtrToHeapHeader(
-      ConvertPtrToCharPtr(GetHeapEnd(raw_node)) - requested);
-
-  raw_node->size_ -= requested;
-  InitializeHeapHeader(new_heap, size);
-  new_heap->next_ = node->next_;
-
-  return HeapHeader * {new_heap};
+  GetFreeListBeforeBegin()->next_ = GetFreeListBeforeBegin();
 }
 
 } // namespace hyundeok::allocator::linked_list
-
-#endif

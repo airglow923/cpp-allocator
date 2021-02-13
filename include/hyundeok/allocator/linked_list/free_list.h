@@ -2,25 +2,25 @@
 #define HYUNDEOK_ALLOCATOR_LINKED_LIST_FREE_LIST_H
 
 #include "hyundeok/allocator/allocator_types.h"
-#include "hyundeok/allocator/allocator_utils.h"
-#include "hyundeok/allocator/linked_list/free_list_iterator.h"
 
 namespace hyundeok::allocator::linked_list {
 
-auto InsertAfter(const_iterator pos, Node_ heap) -> iterator;
+auto InsertAfter(HeapHeader* pos, HeapHeader* heap) -> HeapHeader*;
 
-auto InsertFront(Node_ heap) -> iterator;
+auto InsertFront(HeapHeader* heap) -> HeapHeader*;
 
-auto ReleaseNode(SizeT size) -> iterator;
+auto ReleaseNode(SizeT size) -> HeapHeader*;
 
-auto CoalesceNode(Node_ lhs, Node_ rhs) -> Node_;
+auto CoalesceNode(HeapHeader* lhs, HeapHeader* rhs) -> HeapHeader*;
 
-[[nodiscard]] auto CoalesceNeighbor(const_iterator head, const_iterator current)
-    -> iterator;
+[[nodiscard]] auto CoalesceNeighbor(HeapHeader* head, HeapHeader* current)
+    -> HeapHeader*;
 
-[[nodiscard]] auto SplitHeap(const_iterator node, SizeT size) -> iterator;
+[[nodiscard]] auto SplitHeap(HeapHeader* node, SizeT size) -> HeapHeader*;
 
-auto EraseAfter(const_iterator pos) -> iterator;
+auto EraseAfter(HeapHeader* pos) -> HeapHeader*;
+
+auto ClearFreeList() -> void;
 
 } // namespace hyundeok::allocator::linked_list
 
