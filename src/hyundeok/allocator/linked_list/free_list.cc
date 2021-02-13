@@ -122,7 +122,8 @@ auto ClearFreeList() -> void {
     total_size += AllocateSize(node->size_);
 
   // move heap pointer to the position before heap allocation
-  brk(ConvertPtrToCharPtr(node) - total_size);
+  if (brk(ConvertPtrToCharPtr(node) - total_size) == -1)
+    return;
 
   GetFreeListBeforeBegin()->next_ = GetFreeListBeforeBegin();
 }
