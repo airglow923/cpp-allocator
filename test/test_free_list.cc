@@ -24,27 +24,28 @@ TEST(TestInsertFront, InsertFront) {
 }
 
 TEST(TestInsertFront, InsertFrontMultipleAndCoalesce) {
-  auto heap1 = RequestHeap(64);
-  auto heap2 = RequestHeap(128);
-  auto heap3 = RequestHeap(256);
+  auto* bbeg = GetFreeListBeforeBegin();
+  auto* heap1 = RequestHeap(64);
+  auto* heap2 = RequestHeap(128);
+  auto* heap3 = RequestHeap(256);
 
   InsertFront(heap1);
 
-  EXPECT_EQ(heap1->size_, 64);
-  EXPECT_EQ(heap1->used_, false);
-  EXPECT_NE(heap1->next_, nullptr);
+  EXPECT_EQ(bbeg->next_->size_, 64);
+  EXPECT_EQ(bbeg->next_->used_, false);
+  EXPECT_EQ(bbeg->next_->next_, GetFreeListBeforeBegin());
 
   InsertFront(heap2);
 
-  EXPECT_EQ(heap1->size_, 128 + AllocateSize(64));
-  EXPECT_EQ(heap1->used_, false);
-  EXPECT_NE(heap1->next_, nullptr);
+  EXPECT_EQ(bbeg->next_->size_, 128 + AllocateSize(64));
+  EXPECT_EQ(bbeg->next_->used_, false);
+  EXPECT_EQ(bbeg->next_->next_, GetFreeListBeforeBegin());
 
   InsertFront(heap3);
 
-  EXPECT_EQ(heap1->size_, 256 + AllocateSize(128 + AllocateSize(64)));
-  EXPECT_EQ(heap1->used_, false);
-  EXPECT_NE(heap1->next_, nullptr);
+  EXPECT_EQ(bbeg->next_->size_, 256 + AllocateSize(128 + AllocateSize(64)));
+  EXPECT_EQ(bbeg->next_->used_, false);
+  EXPECT_EQ(bbeg->next_->next_, GetFreeListBeforeBegin());
 
   ClearFreeList();
 }
