@@ -5,6 +5,10 @@
 
 namespace hyundeok::allocator::linked_list {
 
+auto GetFreeListBegin() -> HeapHeader*;
+
+auto GetFreeListBeforeBegin() -> HeapHeader*;
+
 auto InsertAfter(HeapHeader* pos, HeapHeader* heap) -> HeapHeader*;
 
 auto InsertFront(HeapHeader* heap) -> HeapHeader*;

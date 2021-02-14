@@ -24,20 +24,20 @@ struct FreeListRootWrapper {
 // NOLINTNEXTLINE(readability-identifier-naming)
 FreeListRootWrapper kRoot;
 
+} // namespace
+
 auto GetFreeListBeforeBegin() -> HeapHeader* { return &kRoot.root_; }
 
 auto GetFreeListBegin() -> HeapHeader* {
   return GetFreeListBeforeBegin()->next_;
 }
 
-} // namespace
-
 auto InsertAfter(HeapHeader* pos, HeapHeader* heap) -> HeapHeader* {
   heap->next_ = pos->next_;
   pos->next_ = heap;
 
   if (heap->next_ != GetFreeListBeforeBegin()) {
-    heap = CoalesceNode(heap->next_, heap);
+    heap = CoalesceNeighbor(heap->next_, heap);
     pos->next_ = heap;
   }
 
@@ -65,9 +65,9 @@ auto CoalesceNode(HeapHeader* lhs, HeapHeader* rhs) -> HeapHeader* {
 [[nodiscard]] auto CoalesceNeighbor(HeapHeader* head, HeapHeader* cur)
     -> HeapHeader* {
   // when neighbor is prior to node
-  HeapHeader* previous = nullptr;
+  auto* previous = GetFreeListBeforeBegin();
 
-  if (head->next_ != nullptr) {
+  if (head->next_ != GetFreeListBeforeBegin()) {
     for (; head->next_ != cur; head = head->next_)
       continue;
   }
@@ -81,7 +81,7 @@ auto CoalesceNode(HeapHeader* lhs, HeapHeader* rhs) -> HeapHeader* {
   // when the next heap is physically next to the current node
   if (cur->next_ != GetFreeListBeforeBegin() && GetHeapEnd(cur) == cur->next_) {
     // combine node with next heap
-    if (previous != nullptr)
+    if (previous != GetFreeListBeforeBegin())
       previous = CoalesceNode(previous, previous->next_);
     else
       CoalesceNode(cur, cur->next_);
@@ -117,9 +117,9 @@ auto ClearFreeList() -> void {
   auto* node = GetFreeListBegin();
 
   // get total size of allocated heap
-  total_size += AllocateSize(node->size_);
-  for (; node != GetFreeListBeforeBegin(); node = node->next_)
+  for (; node->next_ != GetFreeListBeforeBegin(); node = node->next_)
     total_size += AllocateSize(node->size_);
+  total_size += AllocateSize(node->size_);
 
   // move heap pointer to the position before heap allocation
   if (brk(ConvertPtrToCharPtr(node) - total_size) == -1)
