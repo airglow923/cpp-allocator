@@ -1,0 +1,10 @@
+set(INCLUDE_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/hyundeok/allocator/allocator_types.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/hyundeok/allocator/allocator_utils.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/hyundeok/allocator/concepts.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/hyundeok/allocator/linked_list/fit_search.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/hyundeok/allocator/linked_list/first_fit_search.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/hyundeok/allocator/linked_list/next_fit_search.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/hyundeok/allocator/linked_list/best_fit_search.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/hyundeok/allocator/sequential/sequential_allocate.h
+    PARENT_SCOPE)
