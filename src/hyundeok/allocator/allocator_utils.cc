@@ -14,25 +14,37 @@ auto AllocateSize(SizeT size) -> SizeT {
   return size + sizeof(HeapHeader) - ComputeDataAlignment();
 }
 
+/**
+ * This is because of how the data members of HeapHeader are ordered.
+ *
+ * used_ in HeapHeader occupies sizeof(bool) byte followed by actual data
+ * portion of a heap chunk.
+ *
+ * Why not simply 1 instead of sizeof(bool)?
+ *
+ * The size of bool is implementation-defined although many compilers define
+ * it as 1.
+ */
 auto ComputeDataAlignment() -> SizeT { return sizeof(WordT) - sizeof(bool); }
 
-// for 1-byte arithmeitc operations on pointer
+/**
+ * This is for 1-byte arithmeitc operations on pointer
+ *
+ * static_cast<char*> alone cannot do its job because this function is intended
+ * to operate on any pointer by converting a pointer to void pointer at first.
+ */
 auto ConvertPtrToCharPtr(void* ptr) -> char* { return static_cast<char*>(ptr); }
 
 auto ConvertPtrToHeapHeader(void* ptr) -> HeapHeader* {
   return static_cast<HeapHeader*>(ptr);
 }
 
-auto FindMatchHeap::operator()(HeapHeader* heap, SizeT size) -> bool {
-  return !heap->used_ && heap->size_ >= size;
-}
-
 auto InitializeHeapHeader(HeapHeader* heap, SizeT size) -> HeapHeader* {
   assert(heap != nullptr);
 
   heap->size_ = size;
+  heap->next_ = nullptr;
   heap->used_ = false;
-  heap->next_ = GetSentinelNode();
 
   return heap;
 }
@@ -48,8 +60,8 @@ auto GetHeapStart() -> void* {
 }
 
 auto GetHeapStartHeader() -> HeapHeader*& {
-  static auto* start = GetSentinelNode();
-  return start;
+  static auto* kStart = static_cast<HeapHeader*>(GetHeapStart());
+  return kStart;
 }
 
 /**
@@ -58,12 +70,6 @@ auto GetHeapStartHeader() -> HeapHeader*& {
 auto GetHeapEnd(HeapHeader* heap) -> HeapHeader* {
   return ConvertPtrToHeapHeader(ConvertPtrToCharPtr(heap) +
                                 AllocateSize(heap->size_));
-}
-
-auto GetSentinelNode() -> HeapHeader* {
-  static HeapHeader sentinel{
-      .size_ = 0, .next_ = &sentinel, .used_ = false, .data_ = {0}};
-  return &sentinel;
 }
 
 auto RequestHeap(SizeT size) -> HeapHeader* {

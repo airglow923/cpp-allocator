@@ -20,8 +20,10 @@ auto ComputeSize(SizeT size) -> SizeT {
 
 TEST(TestComputeDataAlignment, AlignmentOnDiffArch) {
   switch (kWordSize) {
-    case 4: EXPECT_EQ(ComputeDataAlignment(), 3);
-    case 8: EXPECT_EQ(ComputeDataAlignment(), 7);
+  case 4:
+    EXPECT_EQ(ComputeDataAlignment(), 3);
+  case 8:
+    EXPECT_EQ(ComputeDataAlignment(), 7);
   }
 }
 
@@ -32,24 +34,15 @@ TEST(TestGetHeapStart, EqualToHeapStart) {
   EXPECT_EQ(GetHeapStart(), head);
 }
 
-TEST(TestGetHeapStartHeader, HeapStartSentinel) {
-  EXPECT_EQ(GetHeapStartHeader(), GetSentinelNode());
-}
-
 TEST(TestGetHeapEnd, HeapEndNextFreeBlock) {
   auto* heap1 = RequestHeap(10);
   auto* heap2 = RequestHeap(30);
   ASSERT_EQ(GetHeapEnd(GetHeapEnd(heap1)), GetHeapEnd(heap2));
 }
 
-TEST(TestGetSentinelNode, SentinelNodeNext) {
-  EXPECT_EQ(GetSentinelNode()->next_, GetSentinelNode());
-}
-
 TEST(TestAllocateSize, CorrectSize) {
   const SizeT i = 32;
-  EXPECT_EQ(AllocateSize(i),
-            i + sizeof(HeapHeader) - ComputeDataAlignment());
+  EXPECT_EQ(AllocateSize(i), i + sizeof(HeapHeader) - ComputeDataAlignment());
 }
 
 TEST(TestAlignHeap, AlignSize) {
@@ -136,22 +129,6 @@ TEST(TestGetHeapHeader, GetHeapHeader) {
   EXPECT_EQ(heap, header);
 }
 
-TEST(TestFindMatchHeap, FindMatchHeap) {
-  auto* heap1 = RequestHeap(10);
-  auto* heap2 = RequestHeap(16);
-  auto match = FindMatchHeap();
-
-  heap2->used_ = true;
-
-  EXPECT_TRUE(match(heap1, 9));
-  EXPECT_TRUE(match(heap1, 10));
-  EXPECT_FALSE(match(heap1, 11));
-
-  EXPECT_FALSE(match(heap2, 15));
-  EXPECT_FALSE(match(heap2, 16));
-  EXPECT_FALSE(match(heap2, 17));
-}
-
 TEST(TestInitializeHeapHeader, InitializeHeap) {
   const int size = 10;
   auto* heap = RequestHeap(size);
@@ -159,7 +136,7 @@ TEST(TestInitializeHeapHeader, InitializeHeap) {
 
   EXPECT_EQ(heap->size_, size);
   EXPECT_EQ(heap->used_, false);
-  EXPECT_EQ(heap->next_, GetSentinelNode());
+  EXPECT_EQ(heap->next_, nullptr);
 }
 
 } // namespace

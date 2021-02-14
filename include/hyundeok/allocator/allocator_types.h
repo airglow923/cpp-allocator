@@ -14,6 +14,9 @@ inline constexpr auto kMaxPtrAddress = std::numeric_limits<long>::max();
 /*
  * next_ points to the first address of the next heap block.
  * data_ ponits to the first byte of the actual data.
+ *
+ * The data members are ordered by size in ascending order in an attemp to
+ * reduce the size of the structure.
  */
 struct HeapHeader {
   SizeT size_;
