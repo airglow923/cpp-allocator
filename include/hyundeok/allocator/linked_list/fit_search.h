@@ -2,7 +2,7 @@
 #define HYUNDEOK_ALLOCATOR_LINKED_LIST_FIT_SEARCH_H
 
 #include "hyundeok/allocator/concepts.h"
-#include "hyundeok/allocator/allocator_types.h"
+#include "hyundeok/allocator/types.h"
 
 #include <type_traits>
 

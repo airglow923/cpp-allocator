@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "hyundeok/allocator/allocator_utils.h"
+#include "hyundeok/allocator/utils.h"
 #include "hyundeok/allocator/linked_list/free_list.h"
 
 #include <utility>

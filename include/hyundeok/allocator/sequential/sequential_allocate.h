@@ -1,15 +1,10 @@
 #ifndef HYUNDEOK_ALLOCATOR_SEQUENTIAL_SEQUENTIAL_ALLOCATE_H
 #define HYUNDEOK_ALLOCATOR_SEQUENTIAL_SEQUENTIAL_ALLOCATE_H
 
-#include "hyundeok/allocator/allocator_types.h"
-#include "hyundeok/allocator/allocator_utils.h"
+#include "hyundeok/allocator/types.h"
+#include "hyundeok/allocator/utils.h"
 
-namespace hyundeok {
-namespace allocator {
-namespace sequential {
-
-} // namespace sequential
-} // namespace allocator
-} // namespace hyundeok
+namespace hyundeok::allocator::sequential {
+} // namespace hyundeok::allocator::sequential
 
 #endif

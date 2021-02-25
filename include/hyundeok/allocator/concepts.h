@@ -1,7 +1,7 @@
 #ifndef HYUNDEOK_ALLOCATOR_CONCEPTS_H
 #define HYUNDEOK_ALLOCATOR_CONCEPTS_H
 
-#include "hyundeok/allocator/allocator_types.h"
+#include "hyundeok/allocator/types.h"
 
 #include <type_traits>
 

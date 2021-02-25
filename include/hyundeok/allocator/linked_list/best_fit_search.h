@@ -1,7 +1,7 @@
 #ifndef HYUNDEOK_ALLOCATOR_LINKED_LIST_BEST_FIT_SEARCH_H
 
 #include "hyundeok/allocator/concepts.h"
-#include "hyundeok/allocator/allocator_types.h"
+#include "hyundeok/allocator/types.h"
 #include "hyundeok/allocator/linked_list/default_heap_compare_policy.h"
 
 namespace hyundeok::allocator::linked_list {

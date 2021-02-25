@@ -1,7 +1,7 @@
 #ifndef HYUNDEOK_ALLOCATOR_LINKED_LIST_FREE_LIST_H
 #define HYUNDEOK_ALLOCATOR_LINKED_LIST_FREE_LIST_H
 
-#include "hyundeok/allocator/allocator_types.h"
+#include "hyundeok/allocator/types.h"
 
 namespace hyundeok::allocator::linked_list {
 

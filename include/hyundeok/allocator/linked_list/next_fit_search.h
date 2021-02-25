@@ -2,7 +2,7 @@
 #define HYUNDEOK_ALLOCATOR_LINKED_LIST_NEXT_FIT_SEARCH_H
 
 #include "hyundeok/allocator/concepts.h"
-#include "hyundeok/allocator/allocator_types.h"
+#include "hyundeok/allocator/types.h"
 #include "hyundeok/allocator/linked_list/default_heap_compare_policy.h"
 #include "hyundeok/allocator/linked_list/first_fit_search.h"
 

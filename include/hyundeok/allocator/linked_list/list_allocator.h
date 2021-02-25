@@ -2,7 +2,7 @@
 #define HYUNDEOK_ALLOCATOR_LINKED_LIST_LIST_ALLOCATOR_H
 
 #include "hyundeok/allocator/concepts.h"
-#include "hyundeok/allocator/allocator_utils.h"
+#include "hyundeok/allocator/utils.h"
 #include "hyundeok/allocator/linked_list/free_list.h"
 #include "hyundeok/allocator/linked_list/first_fit_search.h"
 

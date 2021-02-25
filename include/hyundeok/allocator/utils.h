@@ -1,7 +1,7 @@
 #ifndef HYUNDEOK_ALLOCATOR_ALLOCATOR_UTILS_H
 #define HYUNDEOK_ALLOCATOR_ALLOCATOR_UTILS_H
 
-#include "hyundeok/allocator/allocator_types.h"
+#include "hyundeok/allocator/types.h"
 
 namespace hyundeok::allocator {
 
